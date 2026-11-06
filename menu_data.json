@@ -1,0 +1,544 @@
+{
+  "restaurant": {
+    "name": "ALIXAN FAST FOOD",
+    "slogan": "Har bir luqmada haqiqiy lazzat!",
+    "phone": "+998 91 033 33 93",
+    "phoneDisplay": "910 333 393",
+    "telegram": "alixan_fastfood_bot",
+    "instagram": "alixan_fastfood",
+    "workHours": "Har kuni: 09:00 - 02:00",
+    "address": "Samarqand viloyati, Kattaqo'rg'on shahri, Alixan Fast Food (Cafe)",
+    "mapsUrl": "https://maps.app.goo.gl/Fhy5qVkYocFi2C92A",
+    "deliveryPrice": 5000
+  },
+  "categories": [
+    {
+      "id": "all",
+      "name": "Barchasi",
+      "icon": "🔥"
+    },
+    {
+      "id": "hotdog",
+      "name": "Hot-Doglar",
+      "icon": "🌭"
+    },
+    {
+      "id": "lavash",
+      "name": "Tandir Lavash",
+      "icon": "🌯"
+    },
+    {
+      "id": "burgers",
+      "name": "Burgerlar",
+      "icon": "🍔"
+    },
+    {
+      "id": "donar",
+      "name": "Donarlar",
+      "icon": "🥙"
+    },
+    {
+      "id": "kfc",
+      "name": "KFC va Fri",
+      "icon": "🍗"
+    },
+    {
+      "id": "chiken",
+      "name": "Chiken",
+      "icon": "🥪"
+    },
+    {
+      "id": "pizza",
+      "name": "Pitsalar",
+      "icon": "🍕"
+    },
+    {
+      "id": "drinks",
+      "name": "Ichimliklar",
+      "icon": "🥤"
+    }
+  ],
+  "products": [
+    {
+      "id": "xotdog-kusok-nonga",
+      "categoryId": "hotdog",
+      "mainName": "Hot-Dog",
+      "variantName": "kusok nonga",
+      "name": "Hot-Dog (kusok nonga)",
+      "desc": "Maxsus non, sersuv sosiska, marinadlangan bodring, maydalangan karam, sabzi-salat, klassik mayonez va ketchup.",
+      "price": 8000,
+      "image": "assets/menu/xotdog_kusok_nonga.jpg"
+    },
+    {
+      "id": "xotdog-yarimta-nonga",
+      "categoryId": "hotdog",
+      "mainName": "Hot-Dog",
+      "variantName": "yarimta nonga",
+      "name": "Hot-Dog (yarimta nonga)",
+      "desc": "Grill qilingan yarimta xushbo'y non, sersuv qovurilgan sosiska, marinadlangan bodring, maydalangan karam, sabzi-salat, pishloq sousi, mayonez va ketchup.",
+      "price": 10000,
+      "image": "assets/menu/xotdog_yarimta_nonga.jpg"
+    },
+    {
+      "id": "xotdog-butun-nonga",
+      "categoryId": "hotdog",
+      "mainName": "Hot-Dog",
+      "variantName": "butun nonga",
+      "name": "Hot-Dog (butun nonga)",
+      "desc": "Grill qilingan butun non, 2 ta sersuv sosiska, marinadlangan bodring, maydalangan karam, sabzi-salat, mayonez va pomidor sousi.",
+      "price": 15000,
+      "image": "assets/menu/xotdog_yarimta_nonga.jpg"
+    },
+    {
+      "id": "xotdog-pishloqli-double",
+      "categoryId": "hotdog",
+      "mainName": "Hot-Dog",
+      "variantName": "Pishloqli Double",
+      "name": "Hot-Dog (Pishloqli Double)",
+      "desc": "Grill qilingan non, 2 ta qovurilgan sosiska, erigan pishloq (cheddar), marinadlangan qarsildoq bodring, karam, sabzi-salat, maxsus pishloqli sous va ketchup.",
+      "price": 18000,
+      "image": "assets/menu/xotdog_yarimta_nonga.jpg"
+    },
+    {
+      "id": "xotdog-katta-max",
+      "categoryId": "hotdog",
+      "mainName": "Hot-Dog",
+      "variantName": "katta MAX",
+      "name": "Hot-Dog (katta MAX)",
+      "desc": "Katta maxsus non, 3 ta sersuv sosiska, marinadlangan bodring, karam, sabzi-salat, ko'p pishloq, mayonez va Alixan maxsus sousi.",
+      "price": 20000,
+      "image": "assets/menu/xotdog_yarimta_nonga.jpg"
+    },
+    {
+      "id": "xotdog-mega-alixan",
+      "categoryId": "hotdog",
+      "mainName": "Hot-Dog",
+      "variantName": "Mega Alixan",
+      "name": "Hot-Dog (Mega Alixan)",
+      "desc": "Katta non, 4 ta sosiska, ikki barobar erigan pishloq, qarsildoq bodring, sabzavotlar va Alixan maxsus firmenniy souslari.",
+      "price": 25000,
+      "image": "assets/menu/xotdog_yarimta_nonga.jpg"
+    },
+    {
+      "id": "tandir-lavash-standart",
+      "categoryId": "lavash",
+      "mainName": "Tandir Lavash",
+      "variantName": "Standart",
+      "name": "Tandir Lavash (Standart)",
+      "desc": "Tandirda yopilgan kunjutli qarsildoq xamir, sersuv mol go'shti (doner), yangi pomidor, bodring, qarsildoq chips va maxsus oq-qizil sous.",
+      "price": 35000,
+      "image": "assets/menu/tandir_lavash.jpg"
+    },
+    {
+      "id": "tandir-lavash-pishloqli",
+      "categoryId": "lavash",
+      "mainName": "Tandir Lavash",
+      "variantName": "Pishloqli",
+      "name": "Tandir Lavash (Pishloqli)",
+      "desc": "Kunjutli tandir xamiri, mo'l mol go'shti, erigan pishloq (mozzarella), yangi pomidor va bodring, chips hamda mayin pishloq sousi.",
+      "price": 40000,
+      "image": "assets/menu/tandir_lavash.jpg"
+    },
+    {
+      "id": "tandir-lavash-double-gosht",
+      "categoryId": "lavash",
+      "mainName": "Tandir Lavash",
+      "variantName": "Double Go'sht",
+      "name": "Tandir Lavash (Double Go'sht)",
+      "desc": "Katta tandir xamiri, 2 barobar ko'p sarxil mol go'shti, pishloq, yangi sabzavotlar, chips va Alixan maxsus firmenniy sousi.",
+      "price": 60000,
+      "image": "assets/menu/tandir_lavash.jpg"
+    },
+    {
+      "id": "tandir-lavash-mega-family",
+      "categoryId": "lavash",
+      "mainName": "Tandir Lavash",
+      "variantName": "Mega Gigant",
+      "name": "Tandir Lavash (Mega Gigant)",
+      "desc": "Oila va do'stlar uchun ulkan (3-4 kishilik) tandir lavash: nihoyatda mo'l mol go'shti, qo'shaloq erigan pishloq, sabzavotlar, chips va boy souslar jamlanmasi.",
+      "price": 120000,
+      "image": "assets/menu/tandir_lavash.jpg"
+    },
+    {
+      "id": "tovuqli-tandir-lavash-standart",
+      "categoryId": "lavash",
+      "mainName": "Tovuqli Tandir Lavash",
+      "variantName": "Standart",
+      "name": "Tovuqli Tandir Lavash (Standart)",
+      "desc": "Kunjutli tandir xamiri, marinadlangan sersuv tovuq filesi, yangi pomidor, bodring, qarsildoq chips va maxsus sarimsoqli oq sous.",
+      "price": 35000,
+      "image": "assets/menu/tovuqli_tandir_lavash.jpg"
+    },
+    {
+      "id": "tovuqli-tandir-lavash-pishloqli",
+      "categoryId": "lavash",
+      "mainName": "Tovuqli Tandir Lavash",
+      "variantName": "Pishloqli",
+      "name": "Tovuqli Tandir Lavash (Pishloqli)",
+      "desc": "Kunjutli tandir xamiri, sersuv tovuq filesi, erigan mozzarella pishlog'i, yangi pomidor, bodring, chips va pishloqli mayin sous.",
+      "price": 40000,
+      "image": "assets/menu/tovuqli_tandir_lavash.jpg"
+    },
+    {
+      "id": "tovuqli-tandir-lavash-double",
+      "categoryId": "lavash",
+      "mainName": "Tovuqli Tandir Lavash",
+      "variantName": "Double Tovuq",
+      "name": "Tovuqli Tandir Lavash (Double Tovuq)",
+      "desc": "Katta tandir xamiri, 2 hissa ko'p tovuq go'shti, erigan pishloq, sabzavotlar, qarsildoq chips va Alixan maxsus firmenniy sousi.",
+      "price": 45000,
+      "image": "assets/menu/tovuqli_tandir_lavash.jpg"
+    },
+    {
+      "id": "burger-1-kotlet",
+      "categoryId": "burgers",
+      "mainName": "Burger",
+      "variantName": "1 ta kotletli",
+      "name": "Burger (1 ta kotletli)",
+      "desc": "Mayin kunjutli bulochka, 1 ta sersuv mol go'shti kotleti, erigan cheddar pishlog'i, yangi pomidor, qizil piyoz, yangi salat bargi va maxsus burger sousi.",
+      "price": 30000,
+      "image": "assets/menu/burger_1_kotlet.jpg"
+    },
+    {
+      "id": "burger-2-kotlet",
+      "categoryId": "burgers",
+      "mainName": "Burger",
+      "variantName": "2 ta kotletli",
+      "name": "Burger (2 ta kotletli)",
+      "desc": "Kunjutli bulochka, 2 ta katta sersuv mol go'shti kotleti, ikki qavat erigan cheddar pishlog'i, yangi pomidor, aysberg salat bargi, qizil piyoz va maxsus Alixan sousi.",
+      "price": 45000,
+      "image": "assets/menu/burger_2_kotlet.jpg"
+    },
+    {
+      "id": "burger-tovuqli-1-kotlet",
+      "categoryId": "burgers",
+      "mainName": "Tovuqli Burger",
+      "variantName": "1 ta kotletli",
+      "name": "Burger Tovuqli (1 ta kotletli)",
+      "desc": "Kunjutli mayin bulochka, 1 ta qarsildoq qovurilgan tovuq kotleti (file), yangi pomidor, yangi salat bargi va mayin mayonezli sous.",
+      "price": 25000,
+      "image": "assets/menu/burger_tovuqli_1_kotlet.jpg"
+    },
+    {
+      "id": "burger-tovuqli-2-kotlet",
+      "categoryId": "burgers",
+      "mainName": "Tovuqli Burger",
+      "variantName": "2 ta kotletli",
+      "name": "Burger Tovuqli (2 ta kotletli)",
+      "desc": "Kunjutli bulochka, 2 ta qarsildoq tovuq kotleti, yangi sersuv pomidor, aysberg salat bargi va maxsus oq sous.",
+      "price": 30000,
+      "image": "assets/menu/burger_tovuqli_2_kotlet.jpg"
+    },
+    {
+      "id": "donar-kusok-nonga",
+      "categoryId": "donar",
+      "mainName": "Donar",
+      "variantName": "kusok nonga",
+      "name": "Donar (kusok nonga)",
+      "desc": "Grill qilingan qarsildoq maxsus non, sarxil qovurilgan mol go'shti (doner), yangi pomidor va bodring, maydalangan karam, sarimsoqli oq sous va pomidor sousi.",
+      "price": 30000,
+      "image": "assets/menu/donar_kusok_nonga.jpg"
+    },
+    {
+      "id": "donar-yarimta-nonga",
+      "categoryId": "donar",
+      "mainName": "Donar",
+      "variantName": "yarimta nonga",
+      "name": "Donar (yarimta nonga)",
+      "desc": "Katakli grill qilingan yarimta non, sersuv mol go'shti (doner), yangi pomidor va bodring, maydalangan karam, qizil va oq sous.",
+      "price": 35000,
+      "image": "assets/menu/donar_yarimta_nonga.jpg"
+    },
+    {
+      "id": "donar-pishloqli",
+      "categoryId": "donar",
+      "mainName": "Donar",
+      "variantName": "Pishloqli",
+      "name": "Donar (Pishloqli)",
+      "desc": "Katakli grill non, mol go'shti, erigan mozzarella pishlog'i, yangi pomidor, bodring, karam va mayin pishloq sousi.",
+      "price": 40000,
+      "image": "assets/menu/donar_yarimta_nonga.jpg"
+    },
+    {
+      "id": "donar-double-gosht",
+      "categoryId": "donar",
+      "mainName": "Donar",
+      "variantName": "Double Go'sht MAX",
+      "name": "Donar (Double Go'sht)",
+      "desc": "Katta grill non, ikki hissa ko'p sersuv mol go'shti, erigan pishloq, yangi sabzavotlar va Alixan maxsus sousi.",
+      "price": 45000,
+      "image": "assets/menu/donar_yarimta_nonga.jpg"
+    },
+    {
+      "id": "kartoshka-fri",
+      "categoryId": "kfc",
+      "mainName": "Kartoshka Fri",
+      "variantName": "Qarsildoq",
+      "name": "Kartoshka Fri",
+      "desc": "Oltinrang qovurilgan qarsildoq sifatli kartoshka somonchalari, yengil tuz va tomatli ketchup sousi.",
+      "price": 15000,
+      "image": "assets/menu/kartoshka_fri.jpg"
+    },
+    {
+      "id": "kfc-standart-basket",
+      "categoryId": "kfc",
+      "mainName": "KFC",
+      "variantName": "Standart Basket",
+      "name": "KFC (Standart Basket)",
+      "desc": "Maxsus unli panirovkada qovurilgan qarsildoq tovuq bo'laklari (oyoqcha va qanotlar), maxsus sous bilan.",
+      "price": 40000,
+      "image": "assets/menu/kfc_basket.jpg"
+    },
+    {
+      "id": "kfc-medium-basket",
+      "categoryId": "kfc",
+      "mainName": "KFC",
+      "variantName": "Medium Basket",
+      "name": "KFC (Medium Basket)",
+      "desc": "Sersuv va qarsildoq tovuq bo'laklari (qanotcha, strips, oyoqchalar) hamda 2 xil sarxil sous.",
+      "price": 60000,
+      "image": "assets/menu/kfc_basket.jpg"
+    },
+    {
+      "id": "kfc-large-basket",
+      "categoryId": "kfc",
+      "mainName": "KFC",
+      "variantName": "Large Basket",
+      "name": "KFC (Large Basket)",
+      "desc": "Katta tovuqli boks: qarsildoq qanotlar, oyoqchalar va stripslar hamda souslar to'plami.",
+      "price": 80000,
+      "image": "assets/menu/kfc_basket.jpg"
+    },
+    {
+      "id": "kfc-mega-family-basket",
+      "categoryId": "kfc",
+      "mainName": "KFC",
+      "variantName": "Mega Family",
+      "name": "KFC (Mega Family)",
+      "desc": "Oila va katta do'stlar davrasi uchun ulkan basket: eng ko'p qarsildoq tovuq bo'laklari (strips, qanot, oyoqchalar) va to'liq souslar to'plami.",
+      "price": 100000,
+      "image": "assets/menu/kfc_basket.jpg"
+    },
+    {
+      "id": "chiken-standart",
+      "categoryId": "chiken",
+      "mainName": "Chiken",
+      "variantName": "Standart",
+      "name": "Chiken (Standart)",
+      "desc": "Yumshoq pita noni (cho'ntakcha), qovurilgan mayin tovuq filesi, yangi pomidor, bodring, aysberg salat bargi, qizil piyoz va oq sarimsoqli sous.",
+      "price": 17000,
+      "image": "assets/menu/chiken_pocket.jpg"
+    },
+    {
+      "id": "chiken-pishloqli",
+      "categoryId": "chiken",
+      "mainName": "Chiken",
+      "variantName": "Pishloqli",
+      "name": "Chiken (Pishloqli)",
+      "desc": "Pita noni, sersuv tovuq go'shti, erigan pishloq, yangi pomidor, bodring, salat bargi va mayin sous.",
+      "price": 20000,
+      "image": "assets/menu/chiken_pocket.jpg"
+    },
+    {
+      "id": "chiken-double-katta",
+      "categoryId": "chiken",
+      "mainName": "Chiken",
+      "variantName": "Double Tovuq",
+      "name": "Chiken (Double Tovuq)",
+      "desc": "Katta pita noni, ikki hissa ko'p sersuv tovuq filesi, pishloq, yangi pomidor, bodring, piyoz va Alixan maxsus sousi.",
+      "price": 25000,
+      "image": "assets/menu/chiken_pocket.jpg"
+    },
+    {
+      "id": "chiken-max-alixan",
+      "categoryId": "chiken",
+      "mainName": "Chiken",
+      "variantName": "MAX Alixan",
+      "name": "Chiken (MAX Alixan)",
+      "desc": "Maksimal to'yimli: mo'l qovurilgan tovuq go'shti, qo'shaloq pishloq, yangi sabzavotlar va boy firmenniy souslar jamlanmasi.",
+      "price": 30000,
+      "image": "assets/menu/chiken_pocket.jpg"
+    },
+    {
+      "id": "pitsa-kolbasali",
+      "categoryId": "pizza",
+      "mainName": "Pitsa",
+      "variantName": "Kolbasali",
+      "name": "Pitsa Kolbasali",
+      "desc": "Italyancha qarsildoq xamir, sarxil dudlangan sifatli kolbasa (pepperoni), erigan mozzarella pishlog'i, zaytun (maslina), tomat sousi va oregano.",
+      "price": 80000,
+      "image": "assets/menu/pitsa_kolbasali.jpg",
+      "hasSizes": true,
+      "sizes": [
+        {
+          "size": "25 sm",
+          "price": 80000
+        },
+        {
+          "size": "30 sm",
+          "price": 100000
+        },
+        {
+          "size": "35 sm",
+          "price": 160000
+        }
+      ]
+    },
+    {
+      "id": "pitsa-tovuqli",
+      "categoryId": "pizza",
+      "mainName": "Pitsa",
+      "variantName": "Tovuqli",
+      "name": "Pitsa Tovuqli",
+      "desc": "Pechda pishirilgan xushbo'y xamir, grill tovuq filesi bo'laklari, yangi shampinon qo'ziqorinlari, shirin makkajo'xori, bulg'or qalampiri, mozzarella pishlog'i va pizza sousi.",
+      "price": 80000,
+      "image": "assets/menu/pitsa_tovuqli.jpg",
+      "hasSizes": true,
+      "sizes": [
+        {
+          "size": "25 sm",
+          "price": 80000
+        },
+        {
+          "size": "30 sm",
+          "price": 100000
+        },
+        {
+          "size": "35 sm",
+          "price": 160000
+        }
+      ]
+    },
+    {
+      "id": "pitsa-goshtli",
+      "categoryId": "pizza",
+      "mainName": "Pitsa",
+      "variantName": "Go'shtli",
+      "name": "Pitsa Go'shtli",
+      "desc": "Maxsus tandir xamiri, grill mol go'shti (file va qiyma), yashil bulg'or qalampiri, qizil piyoz, ko'p erigan mozzarella pishlog'i va boy pomidor sousi.",
+      "price": 80000,
+      "image": "assets/menu/pitsa_goshtli.jpg",
+      "hasSizes": true,
+      "sizes": [
+        {
+          "size": "25 sm",
+          "price": 80000
+        },
+        {
+          "size": "30 sm",
+          "price": 100000
+        },
+        {
+          "size": "35 sm",
+          "price": 160000
+        }
+      ]
+    },
+    {
+      "id": "pitsa-assorti",
+      "categoryId": "pizza",
+      "mainName": "Pitsa",
+      "variantName": "Assorti",
+      "name": "Pitsa Assorti",
+      "desc": "Barcha sevimli ta'mlar birida: dudlangan kolbasa, sarxil mol go'shti, mayin tovuq filesi, shampinon qo'ziqorinlari, shirin makkajo'xori, bulg'or qalampiri, zaytun, mo'l mozzarella pishlog'i va pizza sousi.",
+      "price": 80000,
+      "image": "assets/menu/pitsa_assorti.jpg",
+      "hasSizes": true,
+      "sizes": [
+        {
+          "size": "25 sm",
+          "price": 80000
+        },
+        {
+          "size": "30 sm",
+          "price": 100000
+        },
+        {
+          "size": "35 sm",
+          "price": 160000
+        }
+      ]
+    },
+    {
+      "id": "drink-cola",
+      "categoryId": "drinks",
+      "mainName": "Coca-Cola",
+      "name": "Coca-Cola",
+      "desc": "Muzdek, tetiklantiruvchi klassik gazlangan ichimlik.",
+      "price": 6000,
+      "image": "assets/menu/cola.jpg",
+      "hasSizes": true,
+      "sizes": [
+        {
+          "size": "0.5 litr",
+          "label": "0.5 litr",
+          "price": 6000
+        },
+        {
+          "size": "1 litr",
+          "label": "1 litr",
+          "price": 10000
+        },
+        {
+          "size": "1.5 litr",
+          "label": "1.5 litr",
+          "price": 13000
+        }
+      ]
+    },
+    {
+      "id": "drink-pepsi",
+      "categoryId": "drinks",
+      "mainName": "Pepsi",
+      "name": "Pepsi",
+      "desc": "Muzdek, xushbo'y va tetiklantiruvchi klassik Pepsi.",
+      "price": 6000,
+      "image": "assets/menu/pepsi.jpg",
+      "hasSizes": true,
+      "sizes": [
+        {
+          "size": "0.5 litr",
+          "label": "0.5 litr",
+          "price": 6000
+        },
+        {
+          "size": "1 litr",
+          "label": "1 litr",
+          "price": 10000
+        },
+        {
+          "size": "1.5 litr",
+          "label": "1.5 litr",
+          "price": 13000
+        }
+      ]
+    },
+    {
+      "id": "drink-fanta",
+      "categoryId": "drinks",
+      "mainName": "Fanta",
+      "name": "Fanta",
+      "desc": "Apelsin ta'mli, tetiklantiruvchi yorqin salqin ichimlik.",
+      "price": 6000,
+      "image": "assets/menu/fanta.jpg",
+      "hasSizes": true,
+      "sizes": [
+        {
+          "size": "0.5 litr",
+          "label": "0.5 litr",
+          "price": 6000
+        },
+        {
+          "size": "1 litr",
+          "label": "1 litr",
+          "price": 10000
+        },
+        {
+          "size": "1.5 litr",
+          "label": "1.5 litr",
+          "price": 13000
+        }
+      ]
+    }
+  ]
+}
