@@ -14,8 +14,8 @@ BOT_TOKEN = os.getenv("BOT_TOKEN", "").strip()
 raw_admins = os.getenv("ADMIN_IDS", "").strip()
 ADMIN_IDS = [int(x.strip()) for x in raw_admins.split(",") if x.strip().isdigit()]
 
-# Mini App URL (e.g. https://brand.github.io/alixan-fastfood/ or similar)
-MINI_APP_URL = os.getenv("MINI_APP_URL", "https://t.me/alixan_fastfood_bot/app").strip()
+# Mini App URL (e.g. Netlify, Vercel or GitHub Pages)
+MINI_APP_URL = os.getenv("MINI_APP_URL", "https://alixan-fast-food.netlify.app/").strip()
 
 # Google Maps link
 MAPS_URL = os.getenv("MAPS_URL", "https://maps.app.goo.gl/Fhy5qVkYocFi2C92A?g_st=atm").strip()

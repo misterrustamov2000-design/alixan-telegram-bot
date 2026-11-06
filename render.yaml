@@ -10,6 +10,6 @@ services:
       - key: ADMIN_IDS
         value: "1215985999"
       - key: MINI_APP_URL
-        value: "https://t.me/Alixan_cafe_bot"
+        value: "https://alixan-fast-food.netlify.app/"
       - key: MAPS_URL
         value: "https://maps.app.goo.gl/Fhy5qVkYocFi2C92A?g_st=atm"
