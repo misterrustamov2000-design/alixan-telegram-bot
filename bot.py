@@ -37,7 +37,7 @@ async def start_web_healthcheck():
         port = int(port_str)
         app = web.Application()
         async def ping_handler(request):
-            return web.Response(text="👑 Alixan Fast Food Telegram Bot is Running 24/7!", content_type="text/plain; charset=utf-8")
+            return web.Response(text="👑 Alixan Fast Food Telegram Bot is Running 24/7!", content_type="text/plain", charset="utf-8")
         app.router.add_get("/", ping_handler)
         app.router.add_get("/ping", ping_handler)
         app.router.add_get("/health", ping_handler)
