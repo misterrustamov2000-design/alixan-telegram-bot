@@ -13,15 +13,12 @@ def get_welcome_inline(mini_app_url: str) -> InlineKeyboardMarkup:
         ])
     else:
         buttons.append([
-            InlineKeyboardButton(text="🍔 Taomlar Menyusi", callback_data="btn_menu_bot")
+            InlineKeyboardButton(text="🍔 Taomlar Menyusi", url=mini_app_url)
         ])
 
     buttons.append([
-        InlineKeyboardButton(text="📋 Botda ko'rish", callback_data="btn_menu_bot"),
-        InlineKeyboardButton(text="📞 Telefon qilish", callback_data="btn_contacts")
-    ])
-    buttons.append([
-        InlineKeyboardButton(text="📍 Restoran manzili va vaqti", callback_data="btn_location")
+        InlineKeyboardButton(text="📞 Bog'lanish va buyurtma", callback_data="btn_contacts"),
+        InlineKeyboardButton(text="📍 Restoran manzili", callback_data="btn_location")
     ])
 
     return InlineKeyboardMarkup(inline_keyboard=buttons)
@@ -119,20 +116,34 @@ def get_broadcast_confirm_inline() -> InlineKeyboardMarkup:
         ]
     )
 
-def get_admin_settings_inline() -> InlineKeyboardMarkup:
-    return InlineKeyboardMarkup(
-        inline_keyboard=[
-            [
-                InlineKeyboardButton(text="🌐 Mini App URL ni o'zgartirish", callback_data="setting_edit_miniapp")
-            ],
-            [
-                InlineKeyboardButton(text="🛵 Yetkazib berish narxini o'zgartirish", callback_data="setting_edit_delivery")
-            ],
-            [
-                InlineKeyboardButton(text="⏰ Ish vaqtini o'zgartirish", callback_data="setting_edit_workhours")
-            ],
-            [
-                InlineKeyboardButton(text="🔙 Yopish", callback_data="admin_close_settings")
-            ]
-        ]
+def get_broadcast_menu_inline(mini_app_url: str) -> InlineKeyboardMarkup:
+    has_valid_webapp = (
+        mini_app_url
+        and mini_app_url.startswith("https://")
+        and not "t.me" in mini_app_url
     )
+    if has_valid_webapp:
+        btn = InlineKeyboardButton(
+            text="🍔 Online Menyu (Mini App)",
+            web_app=WebAppInfo(url=mini_app_url)
+        )
+    else:
+        btn = InlineKeyboardButton(
+            text="🍔 Online Menyu",
+            url=mini_app_url
+        )
+    return InlineKeyboardMarkup(inline_keyboard=[[btn]])
+
+def get_admins_manage_inline(admins: list[dict], current_user_id: int, super_admin_ids: list[int]) -> InlineKeyboardMarkup:
+    buttons = [
+        [InlineKeyboardButton(text="➕ Yangi admin qo'shish", callback_data="admin_add_prompt")]
+    ]
+    # Add delete buttons for non-superadmin users
+    for adm in admins:
+        if adm["user_id"] not in super_admin_ids and adm["user_id"] != current_user_id:
+            name = adm.get("full_name") or adm.get("username") or f"ID: {adm['user_id']}"
+            buttons.append([
+                InlineKeyboardButton(text=f"🗑 O'chirish: {name[:20]}", callback_data=f"admin_remove:{adm['user_id']}")
+            ])
+    buttons.append([InlineKeyboardButton(text="🔙 Yopish", callback_data="admin_close_panel")])
+    return InlineKeyboardMarkup(inline_keyboard=buttons)

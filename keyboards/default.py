@@ -1,7 +1,6 @@
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, WebAppInfo
-from config import ADMIN_IDS
 
-def get_main_keyboard(mini_app_url: str, user_id: int | None = None) -> ReplyKeyboardMarkup:
+def get_main_keyboard(mini_app_url: str, user_id: int | None = None, is_admin_user: bool = False) -> ReplyKeyboardMarkup:
     # Telegram only allows WebAppInfo for external https domains (not t.me)
     has_valid_webapp = (
         mini_app_url
@@ -18,21 +17,17 @@ def get_main_keyboard(mini_app_url: str, user_id: int | None = None) -> ReplyKey
     keyboard = [
         [menu_btn],
         [
-            KeyboardButton(text="📋 Botda Menyu"),
-            KeyboardButton(text="ℹ️ Biz haqimizda")
+            KeyboardButton(text="ℹ️ Biz haqimizda"),
+            KeyboardButton(text="📞 Telefon raqamlar")
         ],
         [
-            KeyboardButton(text="📞 Telefon raqamlar"),
-            KeyboardButton(text="📍 Manzil va Ish vaqti")
-        ],
-        [
-            KeyboardButton(text="🛵 Yetkazib berish"),
-            KeyboardButton(text="✍️ Fikr / Taklif")
+            KeyboardButton(text="📍 Manzil va Ish vaqti"),
+            KeyboardButton(text="🛵 Yetkazib berish")
         ]
     ]
 
-    # If user is in ADMIN_IDS, show Admin button
-    if user_id and user_id in ADMIN_IDS:
+    # Show Admin Panel button if admin
+    if is_admin_user:
         keyboard.append([KeyboardButton(text="⚙️ Admin Panel")])
 
     return ReplyKeyboardMarkup(
@@ -52,7 +47,10 @@ def get_admin_keyboard() -> ReplyKeyboardMarkup:
             KeyboardButton(text="👥 Guruhga xabar yuborish")
         ],
         [
-            KeyboardButton(text="⚙️ Sozlamalar & Guruhlar"),
+            KeyboardButton(text="👑 Adminlar"),
+            KeyboardButton(text="⚙️ Sozlamalar & Guruhlar")
+        ],
+        [
             KeyboardButton(text="🔙 Asosiy menyuga qaytish")
         ]
     ]

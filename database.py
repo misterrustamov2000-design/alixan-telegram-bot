@@ -60,6 +60,23 @@ def _init_db_sync():
                 created_at TEXT
             )
         """)
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS admins (
+                user_id INTEGER PRIMARY KEY,
+                username TEXT,
+                full_name TEXT,
+                added_by INTEGER,
+                added_at TEXT
+            )
+        """)
+        # Seed initial config admins into DB
+        now = get_now()
+        import config
+        for adm_id in config.ADMIN_IDS:
+            conn.execute("""
+                INSERT OR IGNORE INTO admins (user_id, username, full_name, added_by, added_at)
+                VALUES (?, 'Bosh Admin', 'Asosiy Administrator', 0, ?)
+            """, (adm_id, now))
         conn.commit()
 
 async def init_db():
@@ -261,3 +278,67 @@ def _save_feedback_sync(user_id: int, message: str):
 
 async def save_feedback(user_id: int, message: str):
     _save_feedback_sync(user_id, message)
+
+# ==================== ADMINS MANAGEMENT ====================
+def _is_admin_sync(user_id: int) -> bool:
+    if not user_id:
+        return False
+    import config
+    if user_id in config.ADMIN_IDS:
+        return True
+    try:
+        with _get_connection() as conn:
+            cur = conn.cursor()
+            cur.execute("SELECT user_id FROM admins WHERE user_id = ?", (user_id,))
+            return cur.fetchone() is not None
+    except Exception:
+        return False
+
+async def is_admin(user_id: int) -> bool:
+    return _is_admin_sync(user_id)
+
+def _get_all_admins_sync():
+    with _get_connection() as conn:
+        cur = conn.cursor()
+        cur.execute("SELECT user_id, username, full_name, added_by, added_at FROM admins ORDER BY added_at ASC")
+        rows = cur.fetchall()
+        admins = []
+        for r in rows:
+            admins.append({
+                "user_id": r[0],
+                "username": r[1],
+                "full_name": r[2],
+                "added_by": r[3],
+                "added_at": r[4]
+            })
+        return admins
+
+async def get_all_admins():
+    return _get_all_admins_sync()
+
+def _add_admin_sync(user_id: int, username: str = "", full_name: str = "", added_by: int = 0):
+    now = get_now()
+    with _get_connection() as conn:
+        conn.execute("""
+            INSERT INTO admins (user_id, username, full_name, added_by, added_at)
+            VALUES (?, ?, ?, ?, ?)
+            ON CONFLICT(user_id) DO UPDATE SET
+                username = CASE WHEN excluded.username != '' THEN excluded.username ELSE admins.username END,
+                full_name = CASE WHEN excluded.full_name != '' THEN excluded.full_name ELSE admins.full_name END
+        """, (user_id, username or "", full_name or "", added_by, now))
+        conn.commit()
+
+async def add_admin(user_id: int, username: str = "", full_name: str = "", added_by: int = 0):
+    _add_admin_sync(user_id, username, full_name, added_by)
+
+def _remove_admin_sync(user_id: int) -> bool:
+    import config
+    if user_id in config.ADMIN_IDS:
+        return False
+    with _get_connection() as conn:
+        conn.execute("DELETE FROM admins WHERE user_id = ?", (user_id,))
+        conn.commit()
+        return True
+
+async def remove_admin(user_id: int) -> bool:
+    return _remove_admin_sync(user_id)

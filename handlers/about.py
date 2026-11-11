@@ -35,10 +35,7 @@ async def about_message_handler(message: Message):
     inline_kb = InlineKeyboardMarkup(
         inline_keyboard=[
             [
-                InlineKeyboardButton(text="🍔 Taomlar menyusi", callback_data="btn_menu_bot"),
-                InlineKeyboardButton(text="📞 Bog'lanish", callback_data="btn_contacts")
-            ],
-            [
+                InlineKeyboardButton(text="📞 Bog'lanish va buyurtma", callback_data="btn_contacts"),
                 InlineKeyboardButton(text="📍 Xaritada manzil", callback_data="btn_location")
             ]
         ]

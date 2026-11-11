@@ -54,11 +54,10 @@ async def start_web_healthcheck():
 async def set_default_commands(bot: Bot):
     commands = [
         BotCommand(command="start", description="🌟 Botni qayta ishga tushirish"),
-        BotCommand(command="menu", description="🍔 Taomlar menyusi"),
         BotCommand(command="about", description="ℹ️ Biz haqimizda"),
         BotCommand(command="contacts", description="📞 Telefon va buyurtma"),
         BotCommand(command="location", description="📍 Manzil va ish vaqti"),
-        BotCommand(command="feedback", description="✍️ Fikr va taklif bildirish"),
+        BotCommand(command="delivery", description="🛵 Yetkazib berish"),
         BotCommand(command="admin", description="⚙️ Admin boshqaruv paneli")
     ]
     try:

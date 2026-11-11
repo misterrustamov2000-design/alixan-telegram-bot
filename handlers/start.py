@@ -2,7 +2,7 @@ from aiogram import Router, F
 from aiogram.types import Message, CallbackQuery, FSInputFile
 from aiogram.filters import CommandStart
 import config
-from database import add_or_update_user, get_setting
+from database import add_or_update_user, get_setting, is_admin
 from keyboards.default import get_main_keyboard
 from keyboards.inline import get_welcome_inline, get_contacts_inline, get_location_inline
 
@@ -11,6 +11,7 @@ router = Router(name="start_router")
 @router.message(CommandStart())
 async def command_start_handler(message: Message):
     user = message.from_user
+    user_id = user.id if user else 0
     if user:
         await add_or_update_user(user.id, user.username, user.full_name)
 
@@ -37,7 +38,8 @@ async def command_start_handler(message: Message):
     if not photo_path.exists():
         photo_path = config.IMAGES_DIR / "logo.png"
 
-    reply_kb = get_main_keyboard(miniapp_url, user.id if user else None)
+    is_admin_user = await is_admin(user_id)
+    reply_kb = get_main_keyboard(miniapp_url, user_id=user_id, is_admin_user=is_admin_user)
     inline_kb = get_welcome_inline(miniapp_url)
 
     if photo_path.exists():

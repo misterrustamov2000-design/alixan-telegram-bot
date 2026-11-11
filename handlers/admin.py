@@ -1,6 +1,7 @@
 import asyncio
 import io
 import csv
+import logging
 from aiogram import Router, F, Bot
 from aiogram.types import Message, CallbackQuery, BufferedInputFile, ChatMemberUpdated
 from aiogram.filters import Command, ChatMemberUpdatedFilter, KICKED, LEFT, RESTRICTED, MEMBER, ADMINISTRATOR
@@ -11,10 +12,16 @@ from database import (
     get_user_stats, get_all_active_users, mark_user_blocked,
     get_setting, set_setting, log_broadcast,
     get_recent_users, get_all_users_export,
-    add_or_update_group, remove_group, get_all_active_groups
+    add_or_update_group, remove_group, get_all_active_groups,
+    is_admin, get_all_admins, add_admin, remove_admin
 )
 from keyboards.default import get_admin_keyboard, get_main_keyboard, get_cancel_keyboard
-from keyboards.inline import get_broadcast_confirm_inline, get_admin_settings_inline, InlineKeyboardMarkup, InlineKeyboardButton
+from keyboards.inline import (
+    get_broadcast_confirm_inline, get_broadcast_menu_inline,
+    get_admins_manage_inline, InlineKeyboardMarkup, InlineKeyboardButton
+)
+
+logger = logging.getLogger(__name__)
 
 router = Router(name="admin_router")
 
@@ -27,12 +34,7 @@ class AdminStates(StatesGroup):
     waiting_for_new_miniapp_url = State()
     waiting_for_new_delivery_fee = State()
     waiting_for_new_workhours = State()
-
-def is_admin(user_id: int) -> bool:
-    # Check config ADMIN_IDS or dynamically allow
-    if user_id in config.ADMIN_IDS:
-        return True
-    return False
+    waiting_for_new_admin_id = State()
 
 # ==================== BOT GURUHGA QO'SHILGANDA AVTOMATIK BAZAGA YOZISH ====================
 @router.my_chat_member(ChatMemberUpdatedFilter(member_status_changed=MEMBER | ADMINISTRATOR))
@@ -40,11 +42,12 @@ async def bot_added_to_group(event: ChatMemberUpdated, bot: Bot):
     chat = event.chat
     if chat.type in ["group", "supergroup", "channel"]:
         await add_or_update_group(chat.id, chat.title or "Nomsiz guruh", chat.username)
-        # Notify admins
-        for admin_id in config.ADMIN_IDS:
+        # Notify all admins
+        admins = await get_all_admins()
+        for adm in admins:
             try:
                 await bot.send_message(
-                    admin_id,
+                    adm["user_id"],
                     f"🎉 <b>Bot yangi guruhga qo'shildi!</b>\n\n"
                     f"📌 <b>Nomi:</b> {chat.title}\n"
                     f"🆔 <b>Chat ID:</b> <code>{chat.id}</code>\n"
@@ -65,11 +68,11 @@ async def bot_removed_from_group(event: ChatMemberUpdated):
 @router.message(F.text == "⚙️ Admin Panel")
 async def admin_dashboard(message: Message, state: FSMContext):
     user_id = message.from_user.id if message.from_user else 0
-    if not is_admin(user_id):
+    if not await is_admin(user_id):
         await message.answer(
             f"⛔️ <b>Siz admin emassiz!</b>\n\n"
             f"Sizning Telegram ID raqamingiz: <code>{user_id}</code>\n"
-            f"Adminlik huquqini olish uchun ushbu ID raqamni bot sozlamalariga kiriting.",
+            f"Adminlik huquqini olish uchun ushbu ID raqamni bosh admin orqali botga qo'shing.",
             parse_mode="HTML"
         )
         return
@@ -79,7 +82,7 @@ async def admin_dashboard(message: Message, state: FSMContext):
     text = (
         "👑 <b>ALIXAN FAST FOOD — ADMIN BOSHQARUV PANELI</b>\n\n"
         "Xush kelibsiz, administrator! Quyidagi amallardan birini tanlang:\n\n"
-        f"👥 <b>Jami foydalanuvchilar:</b> {stats['total']} nafar\n"
+        f"👥 <b>Jami mijozlar:</b> {stats['total']} nafar\n"
         f"⚡️ <b>Faol a'zolar:</b> {stats['active_total']} nafar\n"
         f"📅 <b>Bugun qo'shilgan:</b> +{stats['today_joined']} nafar\n"
         f"📢 <b>Ulangan guruhlar:</b> {stats['group_count']} ta\n\n"
@@ -90,18 +93,19 @@ async def admin_dashboard(message: Message, state: FSMContext):
 @router.message(F.text == "🔙 Asosiy menyuga qaytish")
 async def back_to_main_menu(message: Message, state: FSMContext):
     await state.clear()
-    user_id = message.from_user.id if message.from_user else None
+    user_id = message.from_user.id if message.from_user else 0
     miniapp_url = await get_setting("mini_app_url", config.MINI_APP_URL)
+    is_adm = await is_admin(user_id)
     await message.answer(
         "Bosh sahifaga qaytdingiz.",
-        reply_markup=get_main_keyboard(miniapp_url, user_id)
+        reply_markup=get_main_keyboard(miniapp_url, user_id=user_id, is_admin_user=is_adm)
     )
 
 # ==================== 1. STATISTIKA ====================
 @router.message(F.text == "📊 Statistika")
 async def admin_stats_handler(message: Message):
     user_id = message.from_user.id if message.from_user else 0
-    if not is_admin(user_id):
+    if not await is_admin(user_id):
         return
 
     stats = await get_user_stats()
@@ -128,7 +132,7 @@ async def admin_stats_handler(message: Message):
 @router.message(F.text.in_(["👥 Kimlar foydalanmoqda", "👥 Foydalanuvchilar"]))
 async def admin_users_list_handler(message: Message):
     user_id = message.from_user.id if message.from_user else 0
-    if not is_admin(user_id):
+    if not await is_admin(user_id):
         return
 
     recent_users = await get_recent_users(limit=15)
@@ -161,7 +165,7 @@ async def admin_users_list_handler(message: Message):
 @router.callback_query(F.data == "export_users_csv")
 async def export_users_csv_callback(callback: CallbackQuery):
     user_id = callback.from_user.id if callback.from_user else 0
-    if not is_admin(user_id):
+    if not await is_admin(user_id):
         await callback.answer("Ruxsat berilmagan!", show_alert=True)
         return
 
@@ -186,17 +190,17 @@ async def export_users_csv_callback(callback: CallbackQuery):
 @router.message(F.text.in_(["📢 Foydalanuvchilarga xabar", "📢 Xabar yuborish (Broadcast)"]))
 async def user_broadcast_start(message: Message, state: FSMContext):
     user_id = message.from_user.id if message.from_user else 0
-    if not is_admin(user_id):
+    if not await is_admin(user_id):
         return
 
     await state.set_state(AdminStates.waiting_for_user_broadcast)
     await message.answer(
         "📢 <b>BARCHA FOYDALANUVCHILARGA XABAR YUBORISH</b>\n\n"
         "Xabaringizni yuboring:\n"
+        "• Rasm bilan birga matn (chiroyli reklama posti)\n"
         "• Oddiy matn\n"
-        "• Rasm bilan birga matn (chiroyli poster)\n"
-        "• Video yoki boshqa kanaldan forward qilingan xabar\n\n"
-        "<i>Xabar tayyorlangach, bot sizga oldindan ko'rsatib, tasdiq so'raydi.</i>\n\n"
+        "• Video yoki forward xabar\n\n"
+        "💡 <i>Mijozlarga yuboriladigan har bir xabar ostiga avtomatik ravishda <b>«🍔 Online Menyu (Mini App)»</b> tugmasi qo'shiladi!</i>\n\n"
         "Bekor qilish uchun ❌ Bekor qilish tugmasini bosing.",
         parse_mode="HTML",
         reply_markup=get_cancel_keyboard()
@@ -209,7 +213,7 @@ async def broadcast_cancel_msg(message: Message, state: FSMContext):
     await message.answer("Xabar yuborish bekor qilindi.", reply_markup=get_admin_keyboard())
 
 @router.message(AdminStates.waiting_for_user_broadcast)
-async def user_broadcast_preview(message: Message, state: FSMContext):
+async def user_broadcast_preview(message: Message, state: FSMContext, bot: Bot):
     await state.update_data(
         broadcast_chat_id=message.chat.id,
         broadcast_message_id=message.message_id,
@@ -218,9 +222,22 @@ async def user_broadcast_preview(message: Message, state: FSMContext):
     await state.set_state(AdminStates.waiting_for_user_broadcast_confirm)
 
     users = await get_all_active_users()
-    await message.answer("👆 <b>Yuboriladigan xabar ko'rinishi yuqorida.</b>", parse_mode="HTML")
+    miniapp_url = await get_setting("mini_app_url", config.MINI_APP_URL)
+    menu_markup = get_broadcast_menu_inline(miniapp_url)
+
+    await message.answer("👆 <b>Siz yuborgan xabar qabul qilindi. Pastda mijozlar ko'radigan ko'rinishi:</b>", parse_mode="HTML")
+    try:
+        await bot.copy_message(
+            chat_id=message.chat.id,
+            from_chat_id=message.chat.id,
+            message_id=message.message_id,
+            reply_markup=menu_markup
+        )
+    except Exception as e:
+        logger.warning(f"Preview copy failed: {e}")
+
     await message.answer(
-        f"📢 Ushbu xabar jami <b>{len(users)} nafar</b> faol foydalanuvchilarning barchasiga yuboriladi.\n\n"
+        f"📢 Ushbu xabar ostida <b>«Online Menyu (Mini App)»</b> tugmasi bilan birga barcha <b>{len(users)} nafar</b> faol mijozlarga yuboriladi.\n\n"
         "Yuborishni tasdiqlaysizmi?",
         parse_mode="HTML",
         reply_markup=get_broadcast_confirm_inline()
@@ -237,6 +254,9 @@ async def user_broadcast_execute(callback: CallbackQuery, state: FSMContext, bot
     await callback.answer()
 
     users = await get_all_active_users()
+    miniapp_url = await get_setting("mini_app_url", config.MINI_APP_URL)
+    menu_markup = get_broadcast_menu_inline(miniapp_url)
+
     sent = 0
     failed = 0
 
@@ -247,7 +267,8 @@ async def user_broadcast_execute(callback: CallbackQuery, state: FSMContext, bot
             await bot.copy_message(
                 chat_id=uid,
                 from_chat_id=chat_id,
-                message_id=msg_id
+                message_id=msg_id,
+                reply_markup=menu_markup
             )
             sent += 1
         except Exception as e:
@@ -271,7 +292,8 @@ async def user_broadcast_execute(callback: CallbackQuery, state: FSMContext, bot
         "🎉 <b>Xabar tarqatish muvaffaqiyatli yakunlandi!</b>\n\n"
         f"✅ <b>Yetib bordi:</b> {sent} ta\n"
         f"❌ <b>Yetib bormadi (bloklagan):</b> {failed} ta\n"
-        f"👥 <b>Jami yuborilgan:</b> {len(users)} ta",
+        f"👥 <b>Jami yuborilgan:</b> {len(users)} ta\n"
+        "🔗 <i>Barcha xabarlar ostiga «Online Menyu» tugmasi ulandi.</i>",
         parse_mode="HTML"
     )
     await callback.message.answer("Admin boshqaruv menyusi:", reply_markup=get_admin_keyboard())
@@ -280,7 +302,7 @@ async def user_broadcast_execute(callback: CallbackQuery, state: FSMContext, bot
 @router.message(F.text == "👥 Guruhga xabar yuborish")
 async def group_broadcast_start(message: Message, state: FSMContext):
     user_id = message.from_user.id if message.from_user else 0
-    if not is_admin(user_id):
+    if not await is_admin(user_id):
         return
 
     groups = await get_all_active_groups()
@@ -316,7 +338,7 @@ async def group_broadcast_start(message: Message, state: FSMContext):
     )
 
 @router.message(AdminStates.waiting_for_group_broadcast)
-async def group_broadcast_preview(message: Message, state: FSMContext):
+async def group_broadcast_preview(message: Message, state: FSMContext, bot: Bot):
     await state.update_data(
         broadcast_chat_id=message.chat.id,
         broadcast_message_id=message.message_id,
@@ -325,9 +347,22 @@ async def group_broadcast_preview(message: Message, state: FSMContext):
     await state.set_state(AdminStates.waiting_for_group_broadcast_confirm)
 
     groups = await get_all_active_groups()
-    await message.answer("👆 <b>Guruhlarga yuboriladigan xabar ko'rinishi yuqorida.</b>", parse_mode="HTML")
+    miniapp_url = await get_setting("mini_app_url", config.MINI_APP_URL)
+    menu_markup = get_broadcast_menu_inline(miniapp_url)
+
+    await message.answer("👆 <b>Siz yuborgan xabar qabul qilindi. Guruhlarga ko'rinishi:</b>", parse_mode="HTML")
+    try:
+        await bot.copy_message(
+            chat_id=message.chat.id,
+            from_chat_id=message.chat.id,
+            message_id=message.message_id,
+            reply_markup=menu_markup
+        )
+    except Exception as e:
+        logger.warning(f"Preview copy failed: {e}")
+
     await message.answer(
-        f"📢 Ushbu xabar barcha <b>{len(groups)} ta</b> guruhga yuboriladi.\n\n"
+        f"📢 Ushbu xabar barcha <b>{len(groups)} ta</b> guruhga «Online Menyu» tugmasi bilan birga yuboriladi.\n\n"
         "Tasdiqlaysizmi?",
         parse_mode="HTML",
         reply_markup=get_broadcast_confirm_inline()
@@ -344,6 +379,9 @@ async def group_broadcast_execute(callback: CallbackQuery, state: FSMContext, bo
     await callback.answer()
 
     groups = await get_all_active_groups()
+    miniapp_url = await get_setting("mini_app_url", config.MINI_APP_URL)
+    menu_markup = get_broadcast_menu_inline(miniapp_url)
+
     sent = 0
     failed = 0
 
@@ -352,7 +390,8 @@ async def group_broadcast_execute(callback: CallbackQuery, state: FSMContext, bo
             await bot.copy_message(
                 chat_id=g["chat_id"],
                 from_chat_id=chat_id,
-                message_id=msg_id
+                message_id=msg_id,
+                reply_markup=menu_markup
             )
             sent += 1
         except Exception:
@@ -365,7 +404,8 @@ async def group_broadcast_execute(callback: CallbackQuery, state: FSMContext, bo
     await callback.message.answer(
         "🎉 <b>Guruhlarga xabar yuborish yakunlandi!</b>\n\n"
         f"✅ <b>Muvaffaqiyatli yetkazildi:</b> {sent} ta guruhga\n"
-        f"❌ <b>Xatolik bo'ldi:</b> {failed} ta guruhda",
+        f"❌ <b>Xatolik bo'ldi:</b> {failed} ta guruhda\n"
+        "🔗 <i>Barcha guruh postlari ostiga «Online Menyu» tugmasi ulandi.</i>",
         parse_mode="HTML",
         reply_markup=get_admin_keyboard()
     )
@@ -377,11 +417,148 @@ async def cancel_any_broadcast(callback: CallbackQuery, state: FSMContext):
     await callback.message.answer("Admin boshqaruv menyusi:", reply_markup=get_admin_keyboard())
     await callback.answer()
 
-# ==================== 5. SOZLAMALAR VA GURUHLAR ====================
+# ==================== 5. ADMINLAR BOSHQARUVI ====================
+@router.message(F.text == "👑 Adminlar")
+async def admins_list_handler(message: Message):
+    user_id = message.from_user.id if message.from_user else 0
+    if not await is_admin(user_id):
+        return
+
+    admins = await get_all_admins()
+    text = (
+        "👑 <b>ALIXAN FAST FOOD — ADMINISTRATORLAR RO'YXATI</b>\n\n"
+        "Botni boshqarish huquqiga ega shaxslar:\n\n"
+    )
+    for i, a in enumerate(admins, 1):
+        is_super = a["user_id"] in config.ADMIN_IDS
+        role_label = "⭐️ Bosh Admin" if is_super else "🛡 Qo'shimcha Admin"
+        name = a["full_name"] or a["username"] or "Nomsiz"
+        uname = f"@{a['username']}" if a["username"] else "yo'q"
+        text += (
+            f"{i}. <b>{name}</b> ({role_label})\n"
+            f"   🆔 Telegram ID: <code>{a['user_id']}</code>\n"
+            f"   🔗 Username: {uname}\n"
+            f"   📅 Qo'shilgan: <i>{a['added_at']}</i>\n\n"
+        )
+
+    text += (
+        "💡 <i>Har ikkala administrator ham mijozlarga xabarlar, rasmlar yuborishi "
+        "va bot statistikasini boshqarishi mumkin.</i>\n\n"
+        "Yangi admin qo'shish uchun pastdagi tugmani bosing 👇"
+    )
+
+    await message.answer(
+        text,
+        parse_mode="HTML",
+        reply_markup=get_admins_manage_inline(admins, user_id, config.ADMIN_IDS)
+    )
+
+@router.callback_query(F.data == "admin_add_prompt")
+async def admin_add_prompt_callback(callback: CallbackQuery, state: FSMContext):
+    user_id = callback.from_user.id if callback.from_user else 0
+    if not await is_admin(user_id):
+        await callback.answer("Ruxsat berilmagan!", show_alert=True)
+        return
+
+    await state.set_state(AdminStates.waiting_for_new_admin_id)
+    await callback.message.answer(
+        "➕ <b>YANGI ADMIN QO'SHISH</b>\n\n"
+        "Yangi admin bo'ladigan shaxsning <b>Telegram ID raqamini</b> kiriting:\n"
+        "<i>(Masalan: <code>123456789</code>)</i>\n\n"
+        "💡 <i>Eslatma: Ikkinchi odam o'zining Telegram ID sini bilish uchun @userinfobot ga /start bosishi mumkin.</i>\n\n"
+        "Bekor qilish uchun ❌ Bekor qilish tugmasini bosing.",
+        parse_mode="HTML",
+        reply_markup=get_cancel_keyboard()
+    )
+    await callback.answer()
+
+@router.message(AdminStates.waiting_for_new_admin_id, F.text == "❌ Bekor qilish")
+async def cancel_add_admin(message: Message, state: FSMContext):
+    await state.clear()
+    await message.answer("Admin qo'shish bekor qilindi.", reply_markup=get_admin_keyboard())
+
+@router.message(AdminStates.waiting_for_new_admin_id)
+async def process_new_admin_id(message: Message, state: FSMContext, bot: Bot):
+    raw_text = (message.text or "").strip()
+    if not raw_text.isdigit():
+        await message.answer(
+            "⚠️ <b>Noto'g'ri format!</b>\n"
+            "Iltimos, faqat raqamlardan iborat Telegram ID kiriting (masalan: <code>123456789</code>):",
+            parse_mode="HTML"
+        )
+        return
+
+    new_admin_id = int(raw_text)
+    if await is_admin(new_admin_id):
+        await message.answer("⚠️ Ushbu foydalanuvchi allaqachon adminlar ro'yxatida mavjud!", reply_markup=get_admin_keyboard())
+        await state.clear()
+        return
+
+    admin_name = "Admin"
+    admin_uname = ""
+    try:
+        chat = await bot.get_chat(new_admin_id)
+        admin_name = chat.full_name or chat.first_name or "Admin"
+        admin_uname = chat.username or ""
+    except Exception:
+        pass
+
+    current_admin_id = message.from_user.id if message.from_user else 0
+    await add_admin(new_admin_id, username=admin_uname, full_name=admin_name, added_by=current_admin_id)
+    await state.clear()
+
+    await message.answer(
+        f"✅ <b>Yangi admin muvaffaqiyatli qo'shildi!</b>\n\n"
+        f"👤 Nomi: <b>{admin_name}</b>\n"
+        f"🆔 ID: <code>{new_admin_id}</code>\n\n"
+        f"Endi ushbu shaxs ham botda <code>/admin</code> buyrug'idan va admin panelidan to'liq foydalana oladi!",
+        parse_mode="HTML",
+        reply_markup=get_admin_keyboard()
+    )
+
+    try:
+        await bot.send_message(
+            new_admin_id,
+            "🎉 <b>Tabriklaymiz!</b>\n\n"
+            "Sizga <b>Alixan Fast Food</b> rasmiy botida administrator huquqi berildi.\n\n"
+            "Endi siz /admin buyrug'i orqali admin boshqaruv paneliga kirishingiz, mijozlarga rasm va xabarlar yuborishingiz mumkin!",
+            parse_mode="HTML"
+        )
+    except Exception:
+        pass
+
+@router.callback_query(F.data.startswith("admin_remove:"))
+async def remove_admin_callback(callback: CallbackQuery):
+    caller_id = callback.from_user.id if callback.from_user else 0
+    if not await is_admin(caller_id):
+        await callback.answer("Ruxsat berilmagan!", show_alert=True)
+        return
+
+    target_id = int(callback.data.split(":")[1])
+    if target_id in config.ADMIN_IDS:
+        await callback.answer("Asosiy bosh adminni o'chirib bo'lmaydi!", show_alert=True)
+        return
+
+    ok = await remove_admin(target_id)
+    if ok:
+        await callback.answer("Admin o'chirildi!", show_alert=True)
+        await callback.message.edit_text(
+            f"✅ ID: <code>{target_id}</code> bo'lgan adminlik huquqi bekor qilindi.",
+            parse_mode="HTML"
+        )
+    else:
+        await callback.answer("O'chirishda xatolik!", show_alert=True)
+
+@router.callback_query(F.data == "admin_close_panel")
+async def admin_close_panel_callback(callback: CallbackQuery):
+    await callback.message.delete()
+    await callback.answer("Yopildi")
+
+# ==================== 6. SOZLAMALAR VA GURUHLAR ====================
 @router.message(F.text.in_(["⚙️ Sozlamalar & Guruhlar", "⚙️ Sozlamalar"]))
 async def admin_settings_handler(message: Message):
     user_id = message.from_user.id if message.from_user else 0
-    if not is_admin(user_id):
+    if not await is_admin(user_id):
         return
 
     groups = await get_all_active_groups()

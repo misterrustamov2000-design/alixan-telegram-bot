@@ -123,10 +123,30 @@ async def delivery_info_handler(event: Message | CallbackQuery):
         "• <code>+998996787977</code>"
     )
     inline_kb = get_contacts_inline(config.DEFAULT_PHONES)
+    photo_path = config.IMAGES_DIR / "icon_delivery.jpg"
+    if not photo_path.exists():
+        photo_path = config.IMAGES_DIR / "logo.png"
+
     if isinstance(event, Message):
-        await event.answer(text, parse_mode="HTML", reply_markup=inline_kb)
+        if photo_path.exists():
+            await event.answer_photo(
+                photo=FSInputFile(str(photo_path)),
+                caption=text,
+                parse_mode="HTML",
+                reply_markup=inline_kb
+            )
+        else:
+            await event.answer(text, parse_mode="HTML", reply_markup=inline_kb)
     else:
-        await event.message.answer(text, parse_mode="HTML", reply_markup=inline_kb)
+        if photo_path.exists():
+            await event.message.answer_photo(
+                photo=FSInputFile(str(photo_path)),
+                caption=text,
+                parse_mode="HTML",
+                reply_markup=inline_kb
+            )
+        else:
+            await event.message.answer(text, parse_mode="HTML", reply_markup=inline_kb)
         await event.answer()
 
 @router.callback_query(F.data.startswith("call:"))
