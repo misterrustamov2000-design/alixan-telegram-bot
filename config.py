@@ -23,13 +23,14 @@ MAPS_URL = os.getenv("MAPS_URL", "https://maps.app.goo.gl/Fhy5qVkYocFi2C92A?g_st
 # Restaurant defaults
 DEFAULT_RESTAURANT_NAME = "ALIXAN FAST FOOD"
 DEFAULT_PHONES = [
-    "+998 (91) 033-33-93",
-    "+998 (90) 447-79-99",
-    "+998 (99) 678-79-77"
+    "+998910333393",
+    "+998904477999",
+    "+998996787977"
 ]
-DEFAULT_WORK_HOURS = "Har kuni to'xtovsiz: 09:00 dan 02:00 gacha"
-DEFAULT_ADDRESS = "Samarqand viloyati, Kattaqo'rg'on shahri, Alisher Navoiy ko'chasi, 5-maktab yaqinida"
-DEFAULT_DELIVERY_PRICE = "5 000 so'm"
+DEFAULT_WORK_HOURS = "Har kuni to'xtovsiz: 10:00 dan 00:00 gacha. Dam olish kunlarisiz xizmatingizdamiz."
+DEFAULT_ADDRESS = "Samarqand viloyati, Kattaqo'rg'on shahri, Alisher Navoiy ko'chasi 23-uy. Alixan Fast Food (Cafe) restorani."
+DEFAULT_DELIVERY_PRICE = "5 000 so'm (Kattaqo'rg'on shahar ichida)"
+DEFAULT_DELIVERY_EXTRA = "* Shahardan tashqarida narx o'zgaradi"
 
 # Coordinates for Kattaqo'rg'on Alixan Fast Food
 LOCATION_LATITUDE = float(os.getenv("LOCATION_LATITUDE", "39.897368"))

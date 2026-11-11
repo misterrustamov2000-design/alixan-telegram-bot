@@ -10,13 +10,15 @@ def get_location_caption(work_hours: str, address: str, delivery_fee: str, maps_
     return (
         "📍 <b>MANZIL VA ISH VAQTI — ALIXAN FAST FOOD</b>\n\n"
         f"⏰ <b>Ish Vaqti:</b>\n"
-        f"<b>{work_hours}</b>\n"
-        "Dam olish kunlarisiz doim xizmatingizdamiz!\n\n"
+        f"<b>{work_hours}</b>\n\n"
         f"📍 <b>Restoran Manzili:</b>\n"
-        f"{address}\n"
-        "<i>Mo'ljal: Alisher Navoiy ko'chasi, 5-maktab yaqinida</i>\n\n"
-        f"🛵 <b>Yetkazib berish:</b> {delivery_fee} (Kattaqo'rg'on bo'ylab)\n"
-        "📞 <b>Aloqa:</b> <code>+998910333393</code> | <code>+998904477999</code>\n\n"
+        f"<b>{address}</b>\n\n"
+        f"🛵 <b>Yetkazib berish:</b> {delivery_fee}\n"
+        f"<i>{config.DEFAULT_DELIVERY_EXTRA}</i>\n\n"
+        "📞 <b>Qo'ng'iroq qilish uchun:</b>\n"
+        "• 📞 +998910333393 — Operator (Asosiy)\n"
+        "• 📞 +998904477999 — Tezkor buyurtma\n"
+        "• 📞 +998996787977 — Yetkazib berish xizmati\n\n"
         f"🗺 <b>Xarita:</b> <a href=\"{maps_url}\">Google Xaritada ko'rish</a>\n\n"
         "<i>Xaritada ochish yoki lokatsiya nuqtasini olish uchun pastdagi tugmani bosing</i> 👇"
     )
@@ -83,7 +85,7 @@ async def send_location_pin(callback: CallbackQuery):
             latitude=config.LOCATION_LATITUDE,
             longitude=config.LOCATION_LONGITUDE,
             title="Alixan Fast Food",
-            address="Kattaqo'rg'on shahri, Alisher Navoiy ko'chasi, 5-maktab yaqinida"
+            address=config.DEFAULT_ADDRESS
         )
     except Exception:
         await callback.message.answer_location(

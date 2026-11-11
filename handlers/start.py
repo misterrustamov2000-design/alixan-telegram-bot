@@ -29,7 +29,8 @@ async def command_start_handler(message: Message):
         "• 🍗 Qarsildoq KFC va qovurilgan Frikalar\n"
         "• 🍕 Issiqqina va pishloqli Pitsalar\n"
         "• 🌭 To'yimli va betakror Hot-Doglar\n\n"
-        f"🛵 <b>Yetkazib berish:</b> {delivery_fee} (shahar bo'ylab)\n"
+        f"🛵 <b>Yetkazib berish:</b> {delivery_fee}\n"
+        f"<i>{config.DEFAULT_DELIVERY_EXTRA}</i>\n"
         f"⏰ <b>Ish vaqti:</b> {work_hours}\n\n"
         "Kerakli bo'limni tanlash uchun pastdagi tugmalardan foydalaning 👇"
     )

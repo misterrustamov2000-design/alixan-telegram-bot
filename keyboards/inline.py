@@ -24,16 +24,17 @@ def get_welcome_inline(mini_app_url: str) -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(inline_keyboard=buttons)
 
 def get_contacts_inline(phones: list[str]) -> InlineKeyboardMarkup:
+    phone_labels = [
+        ("📞 Qo'ng'iroq: (91) 033-33-93 (Asosiy)", "+998910333393"),
+        ("📞 Qo'ng'iroq: (90) 447-79-99 (Tezkor)", "+998904477999"),
+        ("📞 Qo'ng'iroq: (99) 678-79-77 (Yetkazish)", "+998996787977")
+    ]
     buttons = []
-    for p in phones:
-        clean = "".join(ch for ch in p if ch.isdigit() or ch == "+")
+    for label, num in phone_labels:
         buttons.append([
-            InlineKeyboardButton(text=f"📞 {p}", callback_data=f"call:{clean}")
+            InlineKeyboardButton(text=label, callback_data=f"call:{num}")
         ])
     
-    buttons.append([
-        InlineKeyboardButton(text="💬 Telegram orqali aloqa", url="https://t.me/Alixan_cafe_bot")
-    ])
     buttons.append([
         InlineKeyboardButton(text="🛵 Yetkazib berish shartlari", callback_data="btn_delivery_info")
     ])

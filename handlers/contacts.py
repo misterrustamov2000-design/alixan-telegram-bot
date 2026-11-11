@@ -28,13 +28,15 @@ def get_contacts_caption(delivery_fee: str, work_hours: str) -> str:
     return (
         "📞 <b>TELEFON VA BUYURTMA — ALIXAN FAST FOOD</b>\n\n"
         "Issiq va mazali taomlarni xonadoningiz yoki ishxonangizgacha yetkazib beramiz!\n\n"
-        "<b>Qo'ng'iroq qilish uchun raqam ustiga bosing:</b>\n"
-        "• 📞 <a href=\"tel:+998910333393\"><b>+998 (91) 033-33-93</b></a> — Operator / Asosiy\n"
-        "• 📞 <a href=\"tel:+998904477999\"><b>+998 (90) 447-79-99</b></a> — Tezkor buyurtma\n"
-        "• 📞 <a href=\"tel:+998996787977\"><b>+998 (99) 678-79-77</b></a> — Yetkazib berish xizmati\n\n"
-        f"🛵 <b>Yetkazib berish narxi:</b> <b>{delivery_fee}</b> (Kattaqo'rg'on shahri bo'ylab)\n"
-        f"⏰ <b>Buyurtma qabul qilish:</b> {work_hours}\n\n"
-        "👇 <i>Pastdagi har bir kontakt orqali to'g'ridan-to'g'ri qo'ng'iroq qilishingiz mumkin:</i>"
+        "<b>Qo'ng'iroq qilish uchun quyidagi raqamlarga bosing:</b>\n"
+        "• 📞 +998910333393 — Operator (Asosiy)\n"
+        "• 📞 +998904477999 — Tezkor buyurtma\n"
+        "• 📞 +998996787977 — Yetkazib berish xizmati\n\n"
+        f"🛵 <b>Yetkazib berish narxi:</b> {delivery_fee}\n"
+        f"<i>{config.DEFAULT_DELIVERY_EXTRA}</i>\n\n"
+        f"⏰ <b>Ish vaqti:</b>\n{work_hours}\n\n"
+        f"📍 <b>Manzil:</b>\n{config.DEFAULT_ADDRESS}\n\n"
+        "👇 <i>To'g'ridan-to'g'ri telefon qilish uchun raqam ustiga yoki pastdagi kontakt kartochkalariga bosing:</i>"
     )
 
 @router.message(F.text.in_(["📞 Telefon raqamlar", "/contacts", "Telefon raqamlar"]))
@@ -108,19 +110,22 @@ async def contacts_callback_handler(callback: CallbackQuery):
 @router.callback_query(F.data == "btn_delivery_info")
 async def delivery_info_handler(event: Message | CallbackQuery):
     delivery_fee = await get_setting("delivery_fee", config.DEFAULT_DELIVERY_PRICE)
+    work_hours = await get_setting("work_hours", config.DEFAULT_WORK_HOURS)
     text = (
         "🛵 <b>ALIXAN FAST FOOD YETKAZIB BERISH XIZMATI</b>\n\n"
-        f"💰 <b>Yetkazib berish narxi:</b> {delivery_fee} (Kattaqo'rg'on shahri bo'ylab)\n"
+        f"💰 <b>Yetkazib berish narxi:</b> {delivery_fee}\n"
+        f"<i>{config.DEFAULT_DELIVERY_EXTRA}</i>\n"
         "⚡️ <b>Yetkazish vaqti:</b> 20 - 40 daqiqa\n"
-        "⏰ <b>Xizmat vaqti:</b> Har kuni 09:00 dan 02:00 gacha\n\n"
+        f"⏰ <b>Xizmat vaqti:</b> {work_hours}\n"
+        f"📍 <b>Manzil:</b> {config.DEFAULT_ADDRESS}\n\n"
         "📦 <b>Qulayliklar:</b>\n"
         "• Barcha taomlar maxsus termo-sumkalarda, issiq holida keltiriladi\n"
         "• Har bir buyurtmaga salfetka va qulay bir martalik anjomlar qo'shiladi\n"
         "• To'lov turi: Naqd pul yoki Click / Payme orqali\n\n"
-        "📞 <b>Buyurtma uchun:</b>\n"
-        "• <code>+998910333393</code>\n"
-        "• <code>+998904477999</code>\n"
-        "• <code>+998996787977</code>"
+        "📞 <b>Buyurtma uchun to'g'ridan-to'g'ri raqamlar:</b>\n"
+        "• +998910333393 — Operator (Asosiy)\n"
+        "• +998904477999 — Tezkor buyurtma\n"
+        "• +998996787977 — Yetkazib berish xizmati"
     )
     inline_kb = get_contacts_inline(config.DEFAULT_PHONES)
     photo_path = config.IMAGES_DIR / "icon_delivery.jpg"

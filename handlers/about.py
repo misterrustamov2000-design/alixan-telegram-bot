@@ -16,9 +16,10 @@ def get_about_text(work_hours: str, delivery_fee: str) -> str:
         "▫️ <b>Maxsus Tandir:</b> Qarsildoq tandir lavashlarimiz maxsus tandirda pishiriladi.\n"
         "▫️ <b>Mualliflik souslari:</b> Har bir taomimizga o'ziga xos ta'm beruvchi original souslar.\n"
         "▫️ <b>Tezkor yetkazib berish:</b> Taomlaringiz sovumasdan, issiq va yangi yetkaziladi.\n\n"
-        f"🛵 <b>Yetkazib berish:</b> {delivery_fee} (Kattaqo'rg'on bo'ylab)\n"
+        f"🛵 <b>Yetkazib berish:</b> {delivery_fee}\n"
+        f"<i>{config.DEFAULT_DELIVERY_EXTRA}</i>\n"
         f"⏰ <b>Ish tartibi:</b> {work_hours}\n"
-        "📍 <b>Manzil:</b> Kattaqo'rg'on shahri, Alisher Navoiy ko'chasi, 5-maktab yaqinida.\n\n"
+        f"📍 <b>Manzil:</b> {config.DEFAULT_ADDRESS}\n\n"
         "Sizga xizmat ko'rsatishdan hamisha mamnunmiz! 😊"
     )
 
