@@ -41,6 +41,7 @@ async def start_web_healthcheck():
         app.router.add_get("/", ping_handler)
         app.router.add_get("/ping", ping_handler)
         app.router.add_get("/health", ping_handler)
+        app.router.add_route("*", "/{tail:.*}", ping_handler)
         runner = web.AppRunner(app)
         await runner.setup()
         site = web.TCPSite(runner, "0.0.0.0", port)
