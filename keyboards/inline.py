@@ -25,9 +25,9 @@ def get_welcome_inline(mini_app_url: str) -> InlineKeyboardMarkup:
 
 def get_contacts_inline(phones: list[str]) -> InlineKeyboardMarkup:
     phone_labels = [
-        ("📞 Qo'ng'iroq: (91) 033-33-93 (Asosiy)", "+998910333393"),
-        ("📞 Qo'ng'iroq: (90) 447-79-99 (Tezkor)", "+998904477999"),
-        ("📞 Qo'ng'iroq: (99) 678-79-77 (Yetkazish)", "+998996787977")
+        ("📞 +998910333393", "+998910333393"),
+        ("📞 +998904477999", "+998904477999"),
+        ("📞 +998996787977", "+998996787977")
     ]
     buttons = []
     for label, num in phone_labels:
@@ -97,7 +97,7 @@ def get_product_nav_inline(cat_id: str, current_idx: int, total_items: int, prod
         inline_keyboard=[
             nav_row,
             [
-                InlineKeyboardButton(text="📞 Buyurtma berish: (91) 033-33-93", callback_data="call:+998910333393")
+                InlineKeyboardButton(text="📞 +998910333393", callback_data="call:+998910333393")
             ],
             [
                 InlineKeyboardButton(text="📂 Barcha toifalarga qaytish", callback_data="menu_categories")

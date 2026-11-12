@@ -16,9 +16,9 @@ def get_location_caption(work_hours: str, address: str, delivery_fee: str, maps_
         f"🛵 <b>Yetkazib berish:</b> {delivery_fee}\n"
         f"<i>{config.DEFAULT_DELIVERY_EXTRA}</i>\n\n"
         "📞 <b>Qo'ng'iroq qilish uchun:</b>\n"
-        "• 📞 +998910333393 — Operator (Asosiy)\n"
-        "• 📞 +998904477999 — Tezkor buyurtma\n"
-        "• 📞 +998996787977 — Yetkazib berish xizmati\n\n"
+        "• 📞 +998910333393\n"
+        "• 📞 +998904477999\n"
+        "• 📞 +998996787977\n\n"
         f"🗺 <b>Xarita:</b> <a href=\"{maps_url}\">Google Xaritada ko'rish</a>\n\n"
         "<i>Xaritada ochish yoki lokatsiya nuqtasini olish uchun pastdagi tugmani bosing</i> 👇"
     )

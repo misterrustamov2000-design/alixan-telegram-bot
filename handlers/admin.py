@@ -2,7 +2,7 @@ import asyncio
 import io
 import csv
 import logging
-from aiogram import Router, F, Bot
+from aiogram import Router, F, Bot, BaseMiddleware
 from aiogram.types import Message, CallbackQuery, BufferedInputFile, ChatMemberUpdated
 from aiogram.filters import Command, ChatMemberUpdatedFilter, KICKED, LEFT, RESTRICTED, MEMBER, ADMINISTRATOR
 from aiogram.fsm.context import FSMContext
@@ -24,6 +24,32 @@ from keyboards.inline import (
 logger = logging.getLogger(__name__)
 
 router = Router(name="admin_router")
+
+# ==================== ADMIN XAVFSIZLIK MIDDLEWARE ====================
+# Faqat Bosh Admin va qo'shilgan adminlargina ushbu router'dan foydalana oladi
+class AdminMessageGuard(BaseMiddleware):
+    async def __call__(self, handler, event: Message, data: dict):
+        user_id = event.from_user.id if event.from_user else 0
+        if not await is_admin(user_id):
+            if event.text in ["⚙️ Admin Panel", "/admin"]:
+                await event.answer(
+                    "⛔️ <b>Kirish taqiqlangan!</b>\n\n"
+                    "Sizda admin boshqaruv panelidan foydalanish huquqi yo'q.",
+                    parse_mode="HTML"
+                )
+            return
+        return await handler(event, data)
+
+class AdminCallbackGuard(BaseMiddleware):
+    async def __call__(self, handler, event: CallbackQuery, data: dict):
+        user_id = event.from_user.id if event.from_user else 0
+        if not await is_admin(user_id):
+            await event.answer("⛔️ Kirish taqiqlangan! Siz admin emassiz.", show_alert=True)
+            return
+        return await handler(event, data)
+
+router.message.outer_middleware(AdminMessageGuard())
+router.callback_query.outer_middleware(AdminCallbackGuard())
 
 class AdminStates(StatesGroup):
     waiting_for_user_broadcast = State()

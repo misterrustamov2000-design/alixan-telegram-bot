@@ -284,7 +284,7 @@ def _is_admin_sync(user_id: int) -> bool:
     if not user_id:
         return False
     import config
-    if user_id in config.ADMIN_IDS:
+    if user_id == config.SUPER_ADMIN_ID or user_id in config.ADMIN_IDS:
         return True
     try:
         with _get_connection() as conn:

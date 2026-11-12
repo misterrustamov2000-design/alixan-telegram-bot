@@ -10,9 +10,14 @@ load_dotenv(BASE_DIR / ".env")
 # Telegram Bot Token
 BOT_TOKEN = os.getenv("BOT_TOKEN", "").strip()
 
+# Super Admin ID (Doimiy Bosh Admin)
+SUPER_ADMIN_ID = 1215985999
+
 # Admin IDs (comma separated string in .env: "12345678,987654321")
-raw_admins = os.getenv("ADMIN_IDS", "").strip()
+raw_admins = os.getenv("ADMIN_IDS", "1215985999").strip()
 ADMIN_IDS = [int(x.strip()) for x in raw_admins.split(",") if x.strip().isdigit()]
+if SUPER_ADMIN_ID not in ADMIN_IDS:
+    ADMIN_IDS.append(SUPER_ADMIN_ID)
 
 # Mini App URL (e.g. Netlify, Vercel or GitHub Pages)
 MINI_APP_URL = os.getenv("MINI_APP_URL", "https://alixan-fast-food.netlify.app/").strip()

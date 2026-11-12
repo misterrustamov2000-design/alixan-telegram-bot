@@ -26,8 +26,15 @@ def get_main_keyboard(mini_app_url: str, user_id: int | None = None, is_admin_us
         ]
     ]
 
-    # Show Admin Panel button if admin
-    if is_admin_user:
+    # Show Admin Panel button ONLY if user is Super Admin or added Admin in database
+    is_adm = is_admin_user
+    if not is_adm and user_id:
+        import config
+        from database import _is_admin_sync
+        if user_id == config.SUPER_ADMIN_ID or user_id in config.ADMIN_IDS or _is_admin_sync(user_id):
+            is_adm = True
+
+    if is_adm:
         keyboard.append([KeyboardButton(text="⚙️ Admin Panel")])
 
     return ReplyKeyboardMarkup(
