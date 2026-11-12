@@ -109,7 +109,10 @@ def get_broadcast_confirm_inline() -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(
         inline_keyboard=[
             [
-                InlineKeyboardButton(text="🚀 Ha, hammaga yuborilsin!", callback_data="confirm_broadcast")
+                InlineKeyboardButton(text="🍔 Online Menyu tugmasi bilan yuborish", callback_data="confirm_broadcast_menu")
+            ],
+            [
+                InlineKeyboardButton(text="✉️ Tugmasiz (oddiy xabar) yuborish", callback_data="confirm_broadcast_plain")
             ],
             [
                 InlineKeyboardButton(text="❌ Bekor qilish", callback_data="cancel_broadcast")

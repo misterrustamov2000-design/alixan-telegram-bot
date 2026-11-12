@@ -226,7 +226,7 @@ async def user_broadcast_start(message: Message, state: FSMContext):
         "• Rasm bilan birga matn (chiroyli reklama posti)\n"
         "• Oddiy matn\n"
         "• Video yoki forward xabar\n\n"
-        "💡 <i>Mijozlarga yuboriladigan har bir xabar ostiga avtomatik ravishda <b>«🍔 Online Menyu (Mini App)»</b> tugmasi qo'shiladi!</i>\n\n"
+        "💡 <i>Keyingi qadamda xabarni «Online Menyu» tugmasi bilan yoki oddiy (tugmasiz) yuborishni tanlashingiz mumkin!</i>\n\n"
         "Bekor qilish uchun ❌ Bekor qilish tugmasini bosing.",
         parse_mode="HTML",
         reply_markup=get_cancel_keyboard()
@@ -248,29 +248,30 @@ async def user_broadcast_preview(message: Message, state: FSMContext, bot: Bot):
     await state.set_state(AdminStates.waiting_for_user_broadcast_confirm)
 
     users = await get_all_active_users()
-    miniapp_url = await get_setting("mini_app_url", config.MINI_APP_URL)
-    menu_markup = get_broadcast_menu_inline(miniapp_url)
 
-    await message.answer("👆 <b>Siz yuborgan xabar qabul qilindi. Pastda mijozlar ko'radigan ko'rinishi:</b>", parse_mode="HTML")
+    await message.answer("👆 <b>Siz yuborgan xabar qabul qilindi. Ko'rinishi:</b>", parse_mode="HTML")
     try:
         await bot.copy_message(
             chat_id=message.chat.id,
             from_chat_id=message.chat.id,
-            message_id=message.message_id,
-            reply_markup=menu_markup
+            message_id=message.message_id
         )
     except Exception as e:
         logger.warning(f"Preview copy failed: {e}")
 
     await message.answer(
-        f"📢 Ushbu xabar ostida <b>«Online Menyu (Mini App)»</b> tugmasi bilan birga barcha <b>{len(users)} nafar</b> faol mijozlarga yuboriladi.\n\n"
-        "Yuborishni tasdiqlaysizmi?",
+        f"📢 Ushbu xabar barcha <b>{len(users)} nafar</b> faol mijozlarga yuboriladi.\n\n"
+        "Qanday shaklda yuborishni xohlaysiz?\n"
+        "• <b>🍔 Online Menyu tugmasi bilan:</b> xabar ostiga mini app menyusi tugmasi qo'shiladi.\n"
+        "• <b>✉️ Tugmasiz (oddiy xabar):</b> faqat xabarning o'zi yuboriladi.\n\n"
+        "Kerakli usulni tanlang 👇",
         parse_mode="HTML",
         reply_markup=get_broadcast_confirm_inline()
     )
 
-@router.callback_query(AdminStates.waiting_for_user_broadcast_confirm, F.data == "confirm_broadcast")
+@router.callback_query(AdminStates.waiting_for_user_broadcast_confirm, F.data.in_(["confirm_broadcast_menu", "confirm_broadcast_plain", "confirm_broadcast"]))
 async def user_broadcast_execute(callback: CallbackQuery, state: FSMContext, bot: Bot):
+    with_menu = (callback.data != "confirm_broadcast_plain")
     data = await state.get_data()
     chat_id = data.get("broadcast_chat_id")
     msg_id = data.get("broadcast_message_id")
@@ -280,8 +281,10 @@ async def user_broadcast_execute(callback: CallbackQuery, state: FSMContext, bot
     await callback.answer()
 
     users = await get_all_active_users()
-    miniapp_url = await get_setting("mini_app_url", config.MINI_APP_URL)
-    menu_markup = get_broadcast_menu_inline(miniapp_url)
+    reply_markup = None
+    if with_menu:
+        miniapp_url = await get_setting("mini_app_url", config.MINI_APP_URL)
+        reply_markup = get_broadcast_menu_inline(miniapp_url)
 
     sent = 0
     failed = 0
@@ -294,7 +297,7 @@ async def user_broadcast_execute(callback: CallbackQuery, state: FSMContext, bot
                 chat_id=uid,
                 from_chat_id=chat_id,
                 message_id=msg_id,
-                reply_markup=menu_markup
+                reply_markup=reply_markup
             )
             sent += 1
         except Exception as e:
@@ -314,12 +317,14 @@ async def user_broadcast_execute(callback: CallbackQuery, state: FSMContext, bot
     admin_id = callback.from_user.id if callback.from_user else 0
     await log_broadcast(admin_id, sent, failed, target_type="users")
 
+    tag_info = "🔗 <i>Barcha xabarlar ostiga «Online Menyu» tugmasi ulandi.</i>" if with_menu else "✉️ <i>Xabarlar oddiy ko'rinishda (tugmasiz) yuborildi.</i>"
+
     await status_msg.edit_text(
         "🎉 <b>Xabar tarqatish muvaffaqiyatli yakunlandi!</b>\n\n"
         f"✅ <b>Yetib bordi:</b> {sent} ta\n"
         f"❌ <b>Yetib bormadi (bloklagan):</b> {failed} ta\n"
         f"👥 <b>Jami yuborilgan:</b> {len(users)} ta\n"
-        "🔗 <i>Barcha xabarlar ostiga «Online Menyu» tugmasi ulandi.</i>",
+        f"{tag_info}",
         parse_mode="HTML"
     )
     await callback.message.answer("Admin boshqaruv menyusi:", reply_markup=get_admin_keyboard())
@@ -358,6 +363,7 @@ async def group_broadcast_start(message: Message, state: FSMContext):
         f"Ulangan guruhlar soni: <b>{len(groups)} ta</b>\n"
         f"{group_list_text}\n\n"
         "Guruhlarga chiqarmoqchi bo'lgan xabaringizni yuboring (matn, rasm+matn yoki video):\n\n"
+        "💡 <i>Keyingi qadamda xabarni «Online Menyu» tugmasi bilan yoki oddiy (tugmasiz) yuborishni tanlashingiz mumkin!</i>\n\n"
         "Bekor qilish uchun ❌ Bekor qilish tugmasini bosing.",
         parse_mode="HTML",
         reply_markup=get_cancel_keyboard()
@@ -373,29 +379,30 @@ async def group_broadcast_preview(message: Message, state: FSMContext, bot: Bot)
     await state.set_state(AdminStates.waiting_for_group_broadcast_confirm)
 
     groups = await get_all_active_groups()
-    miniapp_url = await get_setting("mini_app_url", config.MINI_APP_URL)
-    menu_markup = get_broadcast_menu_inline(miniapp_url)
 
     await message.answer("👆 <b>Siz yuborgan xabar qabul qilindi. Guruhlarga ko'rinishi:</b>", parse_mode="HTML")
     try:
         await bot.copy_message(
             chat_id=message.chat.id,
             from_chat_id=message.chat.id,
-            message_id=message.message_id,
-            reply_markup=menu_markup
+            message_id=message.message_id
         )
     except Exception as e:
         logger.warning(f"Preview copy failed: {e}")
 
     await message.answer(
-        f"📢 Ushbu xabar barcha <b>{len(groups)} ta</b> guruhga «Online Menyu» tugmasi bilan birga yuboriladi.\n\n"
-        "Tasdiqlaysizmi?",
+        f"📢 Ushbu xabar barcha <b>{len(groups)} ta</b> guruhga yuboriladi.\n\n"
+        "Qanday shaklda yuborishni xohlaysiz?\n"
+        "• <b>🍔 Online Menyu tugmasi bilan:</b> xabar ostiga mini app menyusi tugmasi qo'shiladi.\n"
+        "• <b>✉️ Tugmasiz (oddiy xabar):</b> faqat xabarning o'zi yuboriladi.\n\n"
+        "Kerakli usulni tanlang 👇",
         parse_mode="HTML",
         reply_markup=get_broadcast_confirm_inline()
     )
 
-@router.callback_query(AdminStates.waiting_for_group_broadcast_confirm, F.data == "confirm_broadcast")
+@router.callback_query(AdminStates.waiting_for_group_broadcast_confirm, F.data.in_(["confirm_broadcast_menu", "confirm_broadcast_plain", "confirm_broadcast"]))
 async def group_broadcast_execute(callback: CallbackQuery, state: FSMContext, bot: Bot):
+    with_menu = (callback.data != "confirm_broadcast_plain")
     data = await state.get_data()
     chat_id = data.get("broadcast_chat_id")
     msg_id = data.get("broadcast_message_id")
@@ -405,8 +412,10 @@ async def group_broadcast_execute(callback: CallbackQuery, state: FSMContext, bo
     await callback.answer()
 
     groups = await get_all_active_groups()
-    miniapp_url = await get_setting("mini_app_url", config.MINI_APP_URL)
-    menu_markup = get_broadcast_menu_inline(miniapp_url)
+    reply_markup = None
+    if with_menu:
+        miniapp_url = await get_setting("mini_app_url", config.MINI_APP_URL)
+        reply_markup = get_broadcast_menu_inline(miniapp_url)
 
     sent = 0
     failed = 0
@@ -417,7 +426,7 @@ async def group_broadcast_execute(callback: CallbackQuery, state: FSMContext, bo
                 chat_id=g["chat_id"],
                 from_chat_id=chat_id,
                 message_id=msg_id,
-                reply_markup=menu_markup
+                reply_markup=reply_markup
             )
             sent += 1
         except Exception:
@@ -427,11 +436,13 @@ async def group_broadcast_execute(callback: CallbackQuery, state: FSMContext, bo
     admin_id = callback.from_user.id if callback.from_user else 0
     await log_broadcast(admin_id, sent, failed, target_type="groups")
 
+    tag_info = "🔗 <i>Barcha guruh postlari ostiga «Online Menyu» tugmasi ulandi.</i>" if with_menu else "✉️ <i>Guruhlarga oddiy ko'rinishda (tugmasiz) yuborildi.</i>"
+
     await callback.message.answer(
         "🎉 <b>Guruhlarga xabar yuborish yakunlandi!</b>\n\n"
         f"✅ <b>Muvaffaqiyatli yetkazildi:</b> {sent} ta guruhga\n"
         f"❌ <b>Xatolik bo'ldi:</b> {failed} ta guruhda\n"
-        "🔗 <i>Barcha guruh postlari ostiga «Online Menyu» tugmasi ulandi.</i>",
+        f"{tag_info}",
         parse_mode="HTML",
         reply_markup=get_admin_keyboard()
     )
