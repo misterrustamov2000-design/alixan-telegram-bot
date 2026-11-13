@@ -74,7 +74,14 @@ async def command_start_handler(message: Message):
             reply_markup=reply_kb
         )
 
-@router.message(F.text)
+ADMIN_COMMANDS = {
+    "⚙️ Admin Panel", "📊 Statistika", "👥 Kimlar foydalanmoqda", "👥 Foydalanuvchilar",
+    "📢 Foydalanuvchilarga xabar", "📢 Xabar yuborish (Broadcast)",
+    "👥 Guruhga xabar yuborish", "👑 Adminlar", "⚙️ Sozlamalar & Guruhlar", "⚙️ Sozlamalar",
+    "🔙 Asosiy menyuga qaytish", "❌ Bekor qilish", "/admin"
+}
+
+@router.message(F.text & ~F.text.in_(ADMIN_COMMANDS))
 async def generic_text_handler(message: Message):
     user_id = message.from_user.id if message.from_user else 0
     miniapp_url = await get_setting("mini_app_url", config.MINI_APP_URL)
