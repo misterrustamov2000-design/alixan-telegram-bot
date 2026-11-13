@@ -226,7 +226,7 @@ async def user_broadcast_start(message: Message, state: FSMContext):
         "• Rasm bilan birga matn (chiroyli reklama posti)\n"
         "• Oddiy matn\n"
         "• Video yoki forward xabar\n\n"
-        "💡 <i>Keyingi qadamda xabarni «Online Menyu» tugmasi bilan yoki oddiy (tugmasiz) yuborishni tanlashingiz mumkin!</i>\n\n"
+        "💡 <i>Keyingi qadamda xabarni «Alixan Menu» tugmasi bilan yoki oddiy (tugmasiz) yuborishni tanlashingiz mumkin!</i>\n\n"
         "Bekor qilish uchun ❌ Bekor qilish tugmasini bosing.",
         parse_mode="HTML",
         reply_markup=get_cancel_keyboard()
@@ -262,7 +262,7 @@ async def user_broadcast_preview(message: Message, state: FSMContext, bot: Bot):
     await message.answer(
         f"📢 Ushbu xabar barcha <b>{len(users)} nafar</b> faol mijozlarga yuboriladi.\n\n"
         "Qanday shaklda yuborishni xohlaysiz?\n"
-        "• <b>🍔 Online Menyu tugmasi bilan:</b> xabar ostiga mini app menyusi tugmasi qo'shiladi.\n"
+        "• <b>🍔 Alixan Menu tugmasi bilan:</b> xabar ostiga mini app menyusi tugmasi qo'shiladi.\n"
         "• <b>✉️ Tugmasiz (oddiy xabar):</b> faqat xabarning o'zi yuboriladi.\n\n"
         "Kerakli usulni tanlang 👇",
         parse_mode="HTML",
@@ -317,7 +317,7 @@ async def user_broadcast_execute(callback: CallbackQuery, state: FSMContext, bot
     admin_id = callback.from_user.id if callback.from_user else 0
     await log_broadcast(admin_id, sent, failed, target_type="users")
 
-    tag_info = "🔗 <i>Barcha xabarlar ostiga «Online Menyu» tugmasi ulandi.</i>" if with_menu else "✉️ <i>Xabarlar oddiy ko'rinishda (tugmasiz) yuborildi.</i>"
+    tag_info = "🔗 <i>Barcha xabarlar ostiga «Alixan Menu» tugmasi ulandi.</i>" if with_menu else "✉️ <i>Xabarlar oddiy ko'rinishda (tugmasiz) yuborildi.</i>"
 
     await status_msg.edit_text(
         "🎉 <b>Xabar tarqatish muvaffaqiyatli yakunlandi!</b>\n\n"
@@ -363,7 +363,7 @@ async def group_broadcast_start(message: Message, state: FSMContext):
         f"Ulangan guruhlar soni: <b>{len(groups)} ta</b>\n"
         f"{group_list_text}\n\n"
         "Guruhlarga chiqarmoqchi bo'lgan xabaringizni yuboring (matn, rasm+matn yoki video):\n\n"
-        "💡 <i>Keyingi qadamda xabarni «Online Menyu» tugmasi bilan yoki oddiy (tugmasiz) yuborishni tanlashingiz mumkin!</i>\n\n"
+        "💡 <i>Keyingi qadamda xabarni «Alixan Menu» tugmasi bilan yoki oddiy (tugmasiz) yuborishni tanlashingiz mumkin!</i>\n\n"
         "Bekor qilish uchun ❌ Bekor qilish tugmasini bosing.",
         parse_mode="HTML",
         reply_markup=get_cancel_keyboard()
@@ -393,7 +393,7 @@ async def group_broadcast_preview(message: Message, state: FSMContext, bot: Bot)
     await message.answer(
         f"📢 Ushbu xabar barcha <b>{len(groups)} ta</b> guruhga yuboriladi.\n\n"
         "Qanday shaklda yuborishni xohlaysiz?\n"
-        "• <b>🍔 Online Menyu tugmasi bilan:</b> xabar ostiga mini app menyusi tugmasi qo'shiladi.\n"
+        "• <b>🍔 Alixan Menu tugmasi bilan:</b> xabar ostiga mini app menyusi tugmasi qo'shiladi.\n"
         "• <b>✉️ Tugmasiz (oddiy xabar):</b> faqat xabarning o'zi yuboriladi.\n\n"
         "Kerakli usulni tanlang 👇",
         parse_mode="HTML",
@@ -436,7 +436,7 @@ async def group_broadcast_execute(callback: CallbackQuery, state: FSMContext, bo
     admin_id = callback.from_user.id if callback.from_user else 0
     await log_broadcast(admin_id, sent, failed, target_type="groups")
 
-    tag_info = "🔗 <i>Barcha guruh postlari ostiga «Online Menyu» tugmasi ulandi.</i>" if with_menu else "✉️ <i>Guruhlarga oddiy ko'rinishda (tugmasiz) yuborildi.</i>"
+    tag_info = "🔗 <i>Barcha guruh postlari ostiga «Alixan Menu» tugmasi ulandi.</i>" if with_menu else "✉️ <i>Guruhlarga oddiy ko'rinishda (tugmasiz) yuborildi.</i>"
 
     await callback.message.answer(
         "🎉 <b>Guruhlarga xabar yuborish yakunlandi!</b>\n\n"

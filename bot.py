@@ -54,11 +54,7 @@ async def start_web_healthcheck():
 
 async def set_default_commands(bot: Bot):
     commands = [
-        BotCommand(command="start", description="🌟 Botni qayta ishga tushirish"),
-        BotCommand(command="about", description="ℹ️ Biz haqimizda"),
-        BotCommand(command="contacts", description="📞 Telefon va buyurtma"),
-        BotCommand(command="location", description="📍 Manzil va ish vaqti"),
-        BotCommand(command="delivery", description="🛵 Yetkazib berish"),
+        BotCommand(command="start", description="🌟 Botni ishga tushirish"),
         BotCommand(command="admin", description="⚙️ Admin boshqaruv paneli")
     ]
     try:
@@ -90,14 +86,14 @@ async def main():
     )
     dp = Dispatcher()
 
-    # Register all routers
+    # Register all routers (admin.router first so admin panel & states take precedence)
+    dp.include_router(admin.router)
     dp.include_router(start.router)
     dp.include_router(about.router)
     dp.include_router(contacts.router)
     dp.include_router(location.router)
     dp.include_router(menu.router)
     dp.include_router(feedback.router)
-    dp.include_router(admin.router)
 
     # Set commands
     await set_default_commands(bot)

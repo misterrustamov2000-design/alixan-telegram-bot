@@ -6,22 +6,12 @@ def get_welcome_inline(mini_app_url: str) -> InlineKeyboardMarkup:
         and mini_app_url.startswith("https://")
         and not "t.me" in mini_app_url
     )
-    buttons = []
     if has_valid_webapp:
-        buttons.append([
-            InlineKeyboardButton(text="🍔 Taomlar Menyusi (Mini App)", web_app=WebAppInfo(url=mini_app_url))
-        ])
+        btn = InlineKeyboardButton(text="🍔 Alixan Menu", web_app=WebAppInfo(url=mini_app_url))
     else:
-        buttons.append([
-            InlineKeyboardButton(text="🍔 Taomlar Menyusi", url=mini_app_url)
-        ])
+        btn = InlineKeyboardButton(text="🍔 Alixan Menu", url=mini_app_url)
 
-    buttons.append([
-        InlineKeyboardButton(text="📞 Bog'lanish va buyurtma", callback_data="btn_contacts"),
-        InlineKeyboardButton(text="📍 Restoran manzili", callback_data="btn_location")
-    ])
-
-    return InlineKeyboardMarkup(inline_keyboard=buttons)
+    return InlineKeyboardMarkup(inline_keyboard=[[btn]])
 
 def get_contacts_inline(phones: list[str]) -> InlineKeyboardMarkup:
     phone_labels = [
@@ -109,7 +99,7 @@ def get_broadcast_confirm_inline() -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(
         inline_keyboard=[
             [
-                InlineKeyboardButton(text="🍔 Online Menyu tugmasi bilan yuborish", callback_data="confirm_broadcast_menu")
+                InlineKeyboardButton(text="🍔 Alixan Menu tugmasi bilan yuborish", callback_data="confirm_broadcast_menu")
             ],
             [
                 InlineKeyboardButton(text="✉️ Tugmasiz (oddiy xabar) yuborish", callback_data="confirm_broadcast_plain")
@@ -128,12 +118,12 @@ def get_broadcast_menu_inline(mini_app_url: str) -> InlineKeyboardMarkup:
     )
     if has_valid_webapp:
         btn = InlineKeyboardButton(
-            text="🍔 Online Menyu (Mini App)",
+            text="🍔 Alixan Menu",
             web_app=WebAppInfo(url=mini_app_url)
         )
     else:
         btn = InlineKeyboardButton(
-            text="🍔 Online Menyu",
+            text="🍔 Alixan Menu",
             url=mini_app_url
         )
     return InlineKeyboardMarkup(inline_keyboard=[[btn]])

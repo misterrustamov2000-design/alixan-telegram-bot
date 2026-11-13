@@ -10,20 +10,12 @@ def get_main_keyboard(mini_app_url: str, user_id: int | None = None, is_admin_us
     )
     
     if has_valid_webapp:
-        menu_btn = KeyboardButton(text="🍔 Taomlar Menyusi (Mini App)", web_app=WebAppInfo(url=mini_app_url))
+        menu_btn = KeyboardButton(text="🍔 Alixan Menu", web_app=WebAppInfo(url=mini_app_url))
     else:
-        menu_btn = KeyboardButton(text="🍔 Taomlar Menyusi")
+        menu_btn = KeyboardButton(text="🍔 Alixan Menu")
 
     keyboard = [
-        [menu_btn],
-        [
-            KeyboardButton(text="ℹ️ Biz haqimizda"),
-            KeyboardButton(text="📞 Telefon raqamlar")
-        ],
-        [
-            KeyboardButton(text="📍 Manzil va Ish vaqti"),
-            KeyboardButton(text="🛵 Yetkazib berish")
-        ]
+        [menu_btn]
     ]
 
     # Show Admin Panel button ONLY if user is Super Admin or added Admin in database
@@ -40,7 +32,7 @@ def get_main_keyboard(mini_app_url: str, user_id: int | None = None, is_admin_us
     return ReplyKeyboardMarkup(
         keyboard=keyboard,
         resize_keyboard=True,
-        input_field_placeholder="Kerakli bo'limni tanlang..."
+        input_field_placeholder="Alixan Menu orqali buyurtma bering..."
     )
 
 def get_admin_keyboard() -> ReplyKeyboardMarkup:
