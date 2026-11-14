@@ -389,10 +389,11 @@ async def group_broadcast_execute(callback: CallbackQuery, state: FSMContext, bo
     reply_markup = None
     if with_menu:
         miniapp_url = await get_setting("mini_app_url", config.MINI_APP_URL)
-        reply_markup = get_broadcast_menu_inline(miniapp_url)
+        reply_markup = get_broadcast_menu_inline(miniapp_url, for_group=True)
 
     sent = 0
     failed = 0
+    error_details = []
 
     for g in groups:
         try:
@@ -403,8 +404,24 @@ async def group_broadcast_execute(callback: CallbackQuery, state: FSMContext, bo
                 reply_markup=reply_markup
             )
             sent += 1
-        except Exception:
+        except Exception as e:
             failed += 1
+            err_str = str(e)
+            logger.error(f"Guruhga xabar yuborishda xatolik ({g.get('title')}, {g['chat_id']}): {err_str}")
+            
+            # Tushunarli o'zbekcha tushuntirish
+            g_title = g.get('title') or f"Chat ID: {g['chat_id']}"
+            if "not an administrator" in err_str.lower() or "administrator rights" in err_str.lower():
+                reason = f"• <b>{g_title}</b>: Bot guruh/kanalda <b>Admin emas</b>. Botga guruhda adminlik huquqini bering!"
+            elif "chat not found" in err_str.lower():
+                reason = f"• <b>{g_title}</b>: Guruh topilmadi yoki bot guruhdan chiqarilgan."
+            elif "have no rights to send a message" in err_str.lower() or "restricted" in err_str.lower() or "forbidden" in err_str.lower():
+                reason = f"• <b>{g_title}</b>: Botga ushbu guruhda xabar yoki media yuborish huquqi cheklangan."
+            else:
+                reason = f"• <b>{g_title}</b>: {err_str}"
+            
+            if reason not in error_details:
+                error_details.append(reason)
         await asyncio.sleep(0.05)
 
     admin_id = callback.from_user.id if callback.from_user else 0
@@ -412,11 +429,22 @@ async def group_broadcast_execute(callback: CallbackQuery, state: FSMContext, bo
 
     tag_info = "🔗 <i>Barcha guruh postlari ostiga «Alixan Menu» tugmasi ulandi.</i>" if with_menu else "✉️ <i>Guruhlarga oddiy ko'rinishda (tugmasiz) yuborildi.</i>"
 
-    await callback.message.answer(
+    status_result = (
         "🎉 <b>Guruhlarga xabar yuborish yakunlandi!</b>\n\n"
         f"✅ <b>Muvaffaqiyatli yetkazildi:</b> {sent} ta guruhga\n"
         f"❌ <b>Xatolik bo'ldi:</b> {failed} ta guruhda\n"
-        f"{tag_info}",
+        f"{tag_info}"
+    )
+
+    if error_details:
+        status_result += (
+            "\n\n⚠️ <b>Aniqlangan sabablar:</b>\n" +
+            "\n".join(error_details) +
+            "\n\n💡 <i>Eslatma: Bot guruh yoki kanalga xabar yuborishi uchun o'sha guruhda <b>Admin</b> bo'lishi va unga «Xabarlarni yuborish» huquqi berilgan bo'lishi shart!</i>"
+        )
+
+    await callback.message.answer(
+        status_result,
         parse_mode="HTML",
         reply_markup=get_admin_keyboard()
     )

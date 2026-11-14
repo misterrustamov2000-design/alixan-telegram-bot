@@ -110,13 +110,13 @@ def get_broadcast_confirm_inline() -> InlineKeyboardMarkup:
         ]
     )
 
-def get_broadcast_menu_inline(mini_app_url: str) -> InlineKeyboardMarkup:
+def get_broadcast_menu_inline(mini_app_url: str, for_group: bool = False) -> InlineKeyboardMarkup:
     has_valid_webapp = (
         mini_app_url
         and mini_app_url.startswith("https://")
         and not "t.me" in mini_app_url
     )
-    if has_valid_webapp:
+    if has_valid_webapp and not for_group:
         btn = InlineKeyboardButton(
             text="🍔 Alixan Menu",
             web_app=WebAppInfo(url=mini_app_url)
